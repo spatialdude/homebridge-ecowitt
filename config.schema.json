@@ -1,15 +1,27 @@
 {
-  "pluginAlias": "ExampleHomebridgePlugin",
+  "pluginAlias": "Ecowitt",
   "pluginType": "platform",
   "singular": true,
   "schema": {
     "type": "object",
     "properties": {
-      "name": {
-        "title": "Name",
+      "port": {
+        "title": "Port",
+        "type": "integer",
+        "required": true,
+        "default": "8080"
+      },
+      "path": {
+        "title": "Path",
         "type": "string",
         "required": true,
-        "default": "Example Dynamic Platform"
+        "default": "/data/report"
+      },
+      "mac": {
+        "title": "MAC Address",
+        "type": "string",
+        "pattern": "^([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2}$",
+        "required": true
       }
     }
   }
