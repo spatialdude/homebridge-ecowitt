@@ -1,18 +1,14 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
-//import { EcowittPlatformAccessory } from './platformAccessory';
-import { WH25, WH65, WH57, EcowittPlatformAccessory } from './platformAccessory';
+import { EcowittPlatformAccessory } from './platformAccessory';
+import { WH25Accessory } from './WH25Accessory';
+import { WH65Accessory } from './WH65Accessory';
+import { WH57Accessory } from './WH57Accessory';
 
 import * as restify from 'restify';
 import * as crypto from 'crypto';
 import { timeStamp } from 'node:console';
-
-const SensorClasses = {
-  WH25: EcowittPlatformAccessory,
-  WH65: EcowittPlatformAccessory,
-  WH57: EcowittPlatformAccessory,
-};
 
 const SensorInfos = {
   WH25: {
@@ -21,7 +17,7 @@ const SensorInfos = {
   },
   WH65: {
     name: 'WH65',
-    displayName: 'Outdor 7 in 1 sensor group',
+    displayName: 'Outdoor 7 in 1 sensor group',
   },
   WH57: {
     name: 'WH57',
@@ -136,9 +132,9 @@ export class EcowittHomebridgePlatform implements DynamicPlatformPlugin {
     this.wxStationInfo.softwareRevision = dataReport.stationtype;
     this.wxStationInfo.frequency = dataReport.freq;
 
-    this.addSensorType(dataReport['wh25batt'] !== undefined, 'WH25');
-    this.addSensorType(dataReport['wh65batt'] !== undefined, 'WH65');
-    this.addSensorType(dataReport['wh57batt'] !== undefined, 'WH57');
+    this.addSensorType(dataReport.wh25batt !== undefined, 'WH25');
+    this.addSensorType(dataReport.wh65batt !== undefined, 'WH65');
+    this.addSensorType(dataReport.wh57batt !== undefined, 'WH57');
 
     this.log.info('WX Station:', JSON.stringify(this.wxStationInfo, undefined, 2));
 
@@ -189,15 +185,15 @@ export class EcowittHomebridgePlatform implements DynamicPlatformPlugin {
 
         switch (sensor) {
           case 'WH25':
-            instance = new WH25(this, accessory);
+            instance = new WH25Accessory(this, accessory);
             break;
 
           case 'WH65':
-            instance = new WH65(this, accessory);
+            instance = new WH65Accessory(this, accessory);
             break;
 
           case 'WH57':
-            instance = new WH57(this, accessory);
+            instance = new WH57Accessory(this, accessory);
             break;
 
           default:
