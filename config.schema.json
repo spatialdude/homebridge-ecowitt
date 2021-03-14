@@ -5,6 +5,13 @@
   "schema": {
     "type": "object",
     "properties": {
+      "mac": {
+        "title": "MAC Address",
+        "description": "Base station MAC address",
+        "type": "string",
+        "pattern": "^([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2}$",
+        "required": true
+      },
       "port": {
         "title": "Port",
         "type": "integer",
@@ -17,12 +24,160 @@
         "required": true,
         "default": "/data/report"
       },
-      "mac": {
-        "title": "MAC Address",
-        "type": "string",
-        "pattern": "^([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2}$",
-        "required": true
+      "soil": {
+        "type": "object",
+        "properties": {
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean",
+            "default": false
+          },
+          "ch1": {
+            "title": "Channel 1",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.soil.hidden;"
+            }
+          },
+          "ch2": {
+            "title": "Channel 2",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.soil.hidden;"
+            }
+          },
+          "ch3": {
+            "title": "Channel 3",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.soil.hidden;"
+            }
+          },
+          "ch4": {
+            "title": "Channel 4",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.soil.hidden;"
+            }
+          },
+          "ch5": {
+            "title": "Channel 5",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.soil.hidden;"
+            }
+          },
+          "ch6": {
+            "title": "Channel 6",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.soil.hidden;"
+            }
+          },
+          "ch7": {
+            "title": "Channel 7",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.soil.hidden;"
+            }
+          },
+          "ch8": {
+            "title": "Channel 8",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.soil.hidden;"
+            }
+          }
+        }
+      },
+      "leak": {
+        "type": "object",
+        "properties": {
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean",
+            "default": false
+          },
+          "ch1": {
+            "title": "Channel 1",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.leak.hidden;"
+            }
+          },
+          "ch2": {
+            "title": "Channel 2",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.leak.hidden;"
+            }
+          },
+          "ch3": {
+            "title": "Channel 3",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.leak.hidden;"
+            }
+          },
+          "ch4": {
+            "title": "Channel 4",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.leak.hidden;"
+            }
+          }
+        }
       }
     }
-  }
+  },
+  "form": [
+    {
+      "type": "fieldset",
+      "expandable": false,
+      "title": "Base Station",
+      "items": [
+        "mac"
+      ]
+    },
+    {
+      "type": "fieldset",
+      "expandable": true,
+      "expanded": false,
+      "title": "Data reporting",
+      "items": [
+        "port",
+        "path"
+      ]
+    },
+    {
+      "type": "fieldset",
+      "expandable": true,
+      "expanded": false,
+      "title": "Soil Moisture Sensors",
+      "items": [
+        "soil.hidden",
+        "soil.ch1",
+        "soil.ch2",
+        "soil.ch3",
+        "soil.ch4",
+        "soil.ch5",
+        "soil.ch6",
+        "soil.ch7",
+        "soil.ch8"
+      ]
+    },
+    {
+      "type": "fieldset",
+      "expandable": true,
+      "expanded": false,
+      "title": "Leak Detectors",
+      "items": [
+        "leak.hidden",
+        "leak.ch1",
+        "leak.ch2",
+        "leak.ch3",
+        "leak.ch4"
+      ]
+    }
+  ]
 }

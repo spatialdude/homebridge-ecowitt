@@ -1,13 +1,9 @@
-import { Service, PlatformAccessory } from 'homebridge';
+import { PlatformAccessory } from 'homebridge';
 import { EcowittHomebridgePlatform } from './platform';
-import { EcowittPlatformAccessory } from './platformAccessory';
+import { THBAccessory } from './THBAccessory';
 
 
-export class WH25Accessory extends EcowittPlatformAccessory {
-  protected temperatureSensor: Service;
-  protected humiditySensor: Service;
-  protected absolutePressureSensor: Service;
-  protected relativePressureSensor: Service;
+export class WH25Accessory extends THBAccessory {
 
   constructor(
     protected readonly platform: EcowittHomebridgePlatform,
@@ -15,25 +11,8 @@ export class WH25Accessory extends EcowittPlatformAccessory {
   ) {
     super(platform, accessory);
 
-    this.temperatureSensor = this.accessory.getService(this.platform.Service.TemperatureSensor)
-      || this.accessory.addService(this.platform.Service.TemperatureSensor);
-
-    this.temperatureSensor.setCharacteristic(
-      this.platform.Characteristic.Name,
-      'Indoor Temperature');
-
-    this.humiditySensor = this.accessory.getService(this.platform.Service.HumiditySensor)
-      || this.accessory.addService(this.platform.Service.HumiditySensor);
-
-    this.humiditySensor.setCharacteristic(
-      this.platform.Characteristic.Name,
-      'Indoor Humidity');
-
-    this.absolutePressureSensor = this.accessory.getService(this.platform.Service.OccupancySensor)
-      || this.accessory.addService(this.platform.Service.OccupancySensor);
-
-    this.relativePressureSensor = this.accessory.getService(this.platform.Service.MotionSensor)
-      || this.accessory.addService(this.platform.Service.MotionSensor);
+    this.setName(this.temperatureSensor, 'Indoor Temperature');
+    this.setName(this.humiditySensor, 'Indoor Humidity');
   }
 
   update(dataReport) {
@@ -44,43 +23,19 @@ export class WH25Accessory extends EcowittPlatformAccessory {
     this.platform.log.info('  baromrelin', dataReport.baromrelin);
     this.platform.log.info('  baromabsin', dataReport.baromabsin);
 
-    const lowBattery = dataReport.wh25batt == '1'
-      ? this.platform.Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW
-      : this.platform.Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL;
+    const lowBattery = dataReport.wh25batt === '1';
 
-    // Temperature
-    this.temperatureSensor.updateCharacteristic(
-      this.platform.Characteristic.CurrentTemperature,
-      this.toCelcius(dataReport.tempinf));
+    this.updateTemperature(dataReport.tempinf);
+    this.updateStatusLowBattery(this.temperatureSensor, lowBattery);
 
-    this.temperatureSensor.updateCharacteristic(
-      this.platform.Characteristic.StatusLowBattery,
-      lowBattery);
+    this.updateHumidity(dataReport.humidityin);
+    this.updateStatusLowBattery(this.humiditySensor, lowBattery);
 
-    // Humidity
-    this.humiditySensor.updateCharacteristic(
-      this.platform.Characteristic.CurrentRelativeHumidity,
-      parseFloat(dataReport.humidityin));
+    this.updateAbsolutePressure(dataReport.baromabsin);
+    this.updateStatusLowBattery(this.absolutePressureSensor, lowBattery);
 
-    this.humiditySensor.updateCharacteristic(
-      this.platform.Characteristic.StatusLowBattery,
-      lowBattery);
-
-    // Barometer
-    this.absolutePressureSensor.updateCharacteristic(
-      this.platform.Characteristic.Name,
-      Math.round(this.tohPa(dataReport.baromabsin)).toString() + ' hPa (Abs)');
-
-    this.absolutePressureSensor.updateCharacteristic(
-      this.platform.Characteristic.StatusLowBattery,
-      lowBattery);
-
-    this.relativePressureSensor.updateCharacteristic(
-      this.platform.Characteristic.Name,
-      Math.round(this.tohPa(dataReport.baromrelin)).toString() + ' hPa (Rel)');
-
-    this.relativePressureSensor.updateCharacteristic(
-      this.platform.Characteristic.StatusLowBattery,
-      lowBattery);
+    this.updateRelativePressue(dataReport.baromrelin);
+    this.updateStatusLowBattery(this.relativePressureSensor, lowBattery);
   }
 }
+

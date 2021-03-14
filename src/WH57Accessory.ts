@@ -36,17 +36,10 @@ export class WH57Accessory extends EcowittPlatformAccessory {
     // Battery
 
     const batteryLevel = parseFloat(dataReport.wh57batt) / 5;
-    const lowBattery = batteryLevel <= 0.2
-      ? this.platform.Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW
-      : this.platform.Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL;
+    const lowBattery = batteryLevel <= 0.2;
 
-    this.battery.updateCharacteristic(
-      this.platform.Characteristic.StatusLowBattery,
-      lowBattery);
-
-    this.battery.updateCharacteristic(
-      this.platform.Characteristic.BatteryLevel,
-      batteryLevel * 100);
+    this.updateBatteryLevel(this.battery, batteryLevel * 100);
+    this.updateStatusLowBattery(this.battery, lowBattery);
 
     // Detection time
 
@@ -59,9 +52,7 @@ export class WH57Accessory extends EcowittPlatformAccessory {
         ? this.platform.Characteristic.ContactSensorState.CONTACT_DETECTED
         : this.platform.Characteristic.ContactSensorState.CONTACT_NOT_DETECTED);
 
-    this.lightningSensor.updateCharacteristic(
-      this.platform.Characteristic.StatusLowBattery,
-      lowBattery);
+    this.updateStatusLowBattery(this.lightningSensor, lowBattery);
 
     let contactText = '⚡';
 
@@ -103,23 +94,18 @@ export class WH57Accessory extends EcowittPlatformAccessory {
       contactText += ' ago';
     }
 
-    this.lightningSensor.updateCharacteristic(
-      this.platform.Characteristic.Name,
-      contactText);
+    this.updateName(this.lightningSensor, contactText);
 
     // Distance to lightning
 
-    this.lightningDistance.updateCharacteristic(
-      this.platform.Characteristic.Name,
+    this.updateName(this.lightningDistance,
       `⚡Distance: ${dataReport.lightning} km`);
 
     this.lightningDistance.updateCharacteristic(
       this.platform.Characteristic.OccupancyDetected,
       lightningDetected);
 
-    this.lightningDistance.updateCharacteristic(
-      this.platform.Characteristic.StatusLowBattery,
-      lowBattery);
+    this.updateStatusLowBattery(this.lightningDistance, lowBattery);
 
     // Number of lightning strikes
 
@@ -127,12 +113,9 @@ export class WH57Accessory extends EcowittPlatformAccessory {
       this.platform.Characteristic.MotionDetected,
       lightningDetected);
 
-    this.lightningCount.updateCharacteristic(
-      this.platform.Characteristic.StatusLowBattery,
-      lowBattery);
+    this.updateStatusLowBattery(this.lightningCount, lowBattery);
 
-    this.lightningCount.updateCharacteristic(
-      this.platform.Characteristic.Name,
-      `⚡Strikes: ${dataReport.lightning_num}`);
+    this.updateName(this.lightningCount,
+      `⚡Daily: ${dataReport.lightning_num}`);
   }
 }
