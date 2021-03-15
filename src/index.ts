@@ -1,11 +1,11 @@
 import { API } from 'homebridge';
 
 import { PLATFORM_NAME } from './settings';
-import { EcowittHomebridgePlatform } from './platform';
+import { EcowittPlatform } from './EcowittPlatform';
 
 /**
  * This method registers the platform with Homebridge
  */
 export = (api: API) => {
-  api.registerPlatform(PLATFORM_NAME, EcowittHomebridgePlatform);
+  api.registerPlatform(PLATFORM_NAME, EcowittPlatform);
 };

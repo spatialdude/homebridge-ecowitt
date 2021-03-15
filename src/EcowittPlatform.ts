@@ -1,7 +1,7 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
-import { EcowittPlatformAccessory } from './platformAccessory';
+import { EcowittAccessory } from './EcowittAccessory';
 import { GW1000Accessory } from './GW1000Accessory';
 import { WH25Accessory } from './WH25Accessory';
 import { WH31Accessory } from './WH31Accessory';
@@ -39,11 +39,11 @@ const SensorInfos = {
   },
   WH25: {
     name: 'WH25',
-    displayName: 'Thermometer, Hygrometer & Barometer',
+    displayName: 'Thermometer/Hygrometer/Barometer',
   },
   WH31: {
     name: 'WH31',
-    displayName: 'Thermometer & Hygrometer',
+    displayName: 'Thermometer/Hygrometer',
   },
   WH65: {
     name: 'WH65',
@@ -68,7 +68,7 @@ const SensorInfos = {
  * This class is the main constructor for your plugin, this is where you should
  * parse the user config and discover/register accessories with Homebridge.
  */
-export class EcowittHomebridgePlatform implements DynamicPlatformPlugin {
+export class EcowittPlatform implements DynamicPlatformPlugin {
   public readonly Service: typeof Service = this.api.hap.Service;
   public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
 
@@ -124,6 +124,8 @@ export class EcowittHomebridgePlatform implements DynamicPlatformPlugin {
     this.api.on('didFinishLaunching', () => {
       log.debug('Executed didFinishLaunching callback');
 
+      this.wxUnregisterAccessories();
+
       this.wxDataReportServer.listen(this.config.port, () => {
         this.log.info('Listening at %s', this.wxDataReportServer.url);
       });
@@ -169,6 +171,11 @@ export class EcowittHomebridgePlatform implements DynamicPlatformPlugin {
           channel: channel,
         });
     }
+  }
+
+  wxUnregisterAccessories() {
+    this.log.info('Unregistering cached accessories:', this.accessories.length);
+    this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, this.accessories);
   }
 
   wxRegisterAccessories(dataReport) {
@@ -226,7 +233,7 @@ export class EcowittHomebridgePlatform implements DynamicPlatformPlugin {
 
         // create the accessory handler for the restored accessory
         // this is imported from `platformAccessory.ts`
-        //new EcowittPlatformAccessory(this, existingAccessory);
+        //new EcowittAccessory(this, existingAccessory);
 
         // it is possible to remove platform accessories at any time using `api.unregisterPlatformAccessories`, eg.:
         // remove platform accessories when no longer present
@@ -275,7 +282,7 @@ export class EcowittHomebridgePlatform implements DynamicPlatformPlugin {
             break;
 
           default:
-            sensor.accessory = new EcowittPlatformAccessory(this, accessory);
+            sensor.accessory = new EcowittAccessory(this, accessory);
             break;
         }
 

@@ -1,13 +1,13 @@
 import { Service, PlatformAccessory } from 'homebridge';
-import { EcowittHomebridgePlatform } from './platform';
-import { EcowittPlatformAccessory } from './platformAccessory';
+import { EcowittPlatform } from './EcowittPlatform';
+import { EcowittAccessory } from './EcowittAccessory';
 
-export class WH55Accessory extends EcowittPlatformAccessory {
+export class WH55Accessory extends EcowittAccessory {
   protected battery: Service;
   protected leakSensor: Service;
 
   constructor(
-    protected readonly platform: EcowittHomebridgePlatform,
+    protected readonly platform: EcowittPlatform,
     protected readonly accessory: PlatformAccessory,
     protected readonly channel: number,
   ) {

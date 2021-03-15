@@ -1,12 +1,12 @@
 import { PlatformAccessory } from 'homebridge';
-import { EcowittHomebridgePlatform } from './platform';
+import { EcowittPlatform } from './EcowittPlatform';
 import { THBAccessory } from './THBAccessory';
 
 
 export class WH25Accessory extends THBAccessory {
 
   constructor(
-    protected readonly platform: EcowittHomebridgePlatform,
+    protected readonly platform: EcowittPlatform,
     protected readonly accessory: PlatformAccessory,
   ) {
     super(platform, accessory);

@@ -1,14 +1,30 @@
 import { Service, PlatformAccessory /*ServiceEventTypes*/ } from 'homebridge';
-import { EcowittHomebridgePlatform } from './platform';
+import { EcowittPlatform } from './EcowittPlatform';
 import { THAccessory } from './THAccessory';
 
 
+// https://en.wikipedia.org/wiki/Ultraviolet_index
+
+const uvInfos = [
+  { level: 0, risk: 'Low' },
+  { level: 3, risk: 'Moderate' },
+  { level: 6, risk: 'High' },
+  { level: 8, risk: 'Very High' },
+  { level: 11, risk: 'Extreme' },
+];
+
 export class WH65Accessory extends THAccessory {
   protected solarRadiation: Service;
-  protected uvIndex: Service;
+  protected uvIndex!: Service;
+  protected uvThreshold: number;
+
+  // protected windDir: Service;
+  // protected windSpeed: Service;
+  // protected windGust: Service;
+  // protected maxDailyGust: Service;
 
   constructor(
-    protected readonly platform: EcowittHomebridgePlatform,
+    protected readonly platform: EcowittPlatform,
     protected readonly accessory: PlatformAccessory,
   ) {
     super(platform, accessory);
@@ -19,6 +35,8 @@ export class WH65Accessory extends THAccessory {
     this.solarRadiation = this.accessory.getService(this.platform.Service.LightSensor)
       || this.accessory.addService(this.platform.Service.LightSensor);
 
+    // Solar Radiation
+
     this.setName(this.solarRadiation, 'Solar Radiation');
 
     this.solarRadiation
@@ -28,13 +46,15 @@ export class WH65Accessory extends THAccessory {
         maxValue: 150000,
       });
 
-    this.uvIndex = this.addOccupancySensor('UV Index');
-    this.uvIndex
-      .getCharacteristic(this.platform.Characteristic.OccupancyDetected)
-      .setProps({
-        minValue: 0,
-        maxValue: 15,
-      });
+    // UV Sensor
+
+    this.uvThreshold = this.platform.config?.ws?.uv?.threshold ?? 6;
+
+    if (!this.platform.config.ws?.uv?.hidden) {
+      this.uvIndex = this.addOccupancySensor('UV Index');
+
+      this.platform.log.info('uvThreshold:', this.uvThreshold);
+    }
   }
 
   update(dataReport) {
@@ -44,11 +64,22 @@ export class WH65Accessory extends THAccessory {
     this.platform.log.info('  humidity:', dataReport.humidity);
     this.platform.log.info('  solarradiation:', dataReport.solarradiation);
     this.platform.log.info('  uv:', dataReport.uv);
+    this.platform.log.info('  winddir:', dataReport.winddir);
+    this.platform.log.info('  windspeedmph:', dataReport.windspeedmph);
+    this.platform.log.info('  windgustmph:', dataReport.windgustmph);
+    this.platform.log.info('  maxdailygust:', dataReport.maxdailygust);
+    this.platform.log.info('  rainratein:', dataReport.rainratein);
+    this.platform.log.info('  eventrainin:', dataReport.eventrainin);
+    this.platform.log.info('  hourlyrainin:', dataReport.hourlyrainin);
+    this.platform.log.info('  dailyrainin:', dataReport.dailyrainin);
+    this.platform.log.info('  weeklyrainin:', dataReport.weeklyrainin);
+    this.platform.log.info('  monthlyrainin:', dataReport.monthlyrainin);
+    this.platform.log.info('  yearlyrainin:', dataReport.yearlyrainin);
+    this.platform.log.info('  totalrainin:', dataReport.totalrainin);
 
     this.updateStatusActive(this.temperatureSensor, true);
     this.updateStatusActive(this.humiditySensor, true);
     this.updateStatusActive(this.solarRadiation, true);
-    this.updateStatusActive(this.uvIndex, true);
 
     const lowBattery = dataReport.wh65batt === '1';
 
@@ -63,10 +94,14 @@ export class WH65Accessory extends THAccessory {
       Math.round(this.toLux(dataReport.solarradiation)));
     this.updateStatusLowBattery(this.solarRadiation, lowBattery);
 
-    this.updateName(this.uvIndex, `UV Index: ${dataReport.uv}`);
-    this.uvIndex.updateCharacteristic(
-      this.platform.Characteristic.OccupancyDetected,
-      parseInt(dataReport.uv));
+
+    if (this.uvIndex) {
+      const uv = parseInt(dataReport.uv);
+
+      this.updateStatusActive(this.uvIndex, true);
+      this.updateName(this.uvIndex, `UV Index: ${this.toRisk(uv)} (${uv})`);
+      this.updateOccupancyDetected(this.uvIndex, uv > this.uvThreshold);
+    }
   }
 
   toLux(wm2): number {
@@ -74,5 +109,18 @@ export class WH65Accessory extends THAccessory {
     return wm2 > 0
       ? wm2 / 0.00788
       : 0;
+  }
+
+
+  toRisk(uvIndex) {
+    let uvInfo = uvInfos[0];
+
+    for (let i = 1; i < uvInfos.length; i++) {
+      if (uvIndex >= uvInfos[i].level) {
+        uvInfo = uvInfos[i];
+      }
+    }
+
+    return uvInfo.risk;
   }
 }

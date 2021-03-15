@@ -1,15 +1,15 @@
 import { Service, PlatformAccessory } from 'homebridge';
-import { EcowittHomebridgePlatform } from './platform';
-import { EcowittPlatformAccessory } from './platformAccessory';
+import { EcowittPlatform } from './EcowittPlatform';
+import { EcowittAccessory } from './EcowittAccessory';
 
-export class WH57Accessory extends EcowittPlatformAccessory {
+export class WH57Accessory extends EcowittAccessory {
   protected battery: Service;
   protected lightningSensor: Service;
   protected lightningDistance: Service;
   protected lightningCount: Service;
 
   constructor(
-    protected readonly platform: EcowittHomebridgePlatform,
+    protected readonly platform: EcowittPlatform,
     protected readonly accessory: PlatformAccessory,
   ) {
     super(platform, accessory);

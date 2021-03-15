@@ -1,5 +1,5 @@
 import { Service, PlatformAccessory } from 'homebridge';
-import { EcowittHomebridgePlatform } from './platform';
+import { EcowittPlatform } from './EcowittPlatform';
 import { THAccessory } from './THAccessory';
 
 
@@ -8,7 +8,7 @@ export class THBAccessory extends THAccessory {
   protected relativePressureSensor: Service;
 
   constructor(
-    protected readonly platform: EcowittHomebridgePlatform,
+    protected readonly platform: EcowittPlatform,
     protected readonly accessory: PlatformAccessory,
   ) {
     super(platform, accessory);

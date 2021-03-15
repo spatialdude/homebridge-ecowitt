@@ -1,10 +1,10 @@
 import { PlatformAccessory, /*CharacteristicValue,*/ Service } from 'homebridge';
-import { EcowittHomebridgePlatform } from './platform';
+import { EcowittPlatform } from './EcowittPlatform';
 
-export class EcowittPlatformAccessory {
+export class EcowittAccessory {
 
   constructor(
-    protected readonly platform: EcowittHomebridgePlatform,
+    protected readonly platform: EcowittPlatform,
     protected readonly accessory: PlatformAccessory,
   ) {
 

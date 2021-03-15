@@ -1,11 +1,11 @@
 import { PlatformAccessory } from 'homebridge';
-import { EcowittHomebridgePlatform } from './platform';
+import { EcowittPlatform } from './EcowittPlatform';
 import { THAccessory } from './THAccessory';
 
 
 export class WH31Accessory extends THAccessory {
   constructor(
-    protected readonly platform: EcowittHomebridgePlatform,
+    protected readonly platform: EcowittPlatform,
     protected readonly accessory: PlatformAccessory,
     protected channel: number,
   ) {

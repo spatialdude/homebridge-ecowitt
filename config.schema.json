@@ -24,6 +24,96 @@
         "required": true,
         "default": "/data/report"
       },
+      "ws": {
+        "type": "object",
+        "properties": {
+          "uv": {
+            "title": "UV Index",
+            "type": "object",
+            "properties": {
+              "hidden": {
+                "title": "Hidden",
+                "type": "boolean",
+                "default": false
+              },
+              "threshold": {
+                "title": "Threshold",
+                "type": "integer",
+                "default": 6,
+                "condition": {
+                  "functionBody": "return !model.ws.uv.hidden;"
+                }
+              }
+            }
+          }
+        }
+      },
+      "th": {
+        "type": "object",
+        "properties": {
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean",
+            "default": false
+          },
+          "ch1": {
+            "title": "Channel 1",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.th.hidden;"
+            }
+          },
+          "ch2": {
+            "title": "Channel 2",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.th.hidden;"
+            }
+          },
+          "ch3": {
+            "title": "Channel 3",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.th.hidden;"
+            }
+          },
+          "ch4": {
+            "title": "Channel 4",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.th.hidden;"
+            }
+          },
+          "ch5": {
+            "title": "Channel 5",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.th.hidden;"
+            }
+          },
+          "ch6": {
+            "title": "Channel 6",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.th.hidden;"
+            }
+          },
+          "ch7": {
+            "title": "Channel 7",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.th.hidden;"
+            }
+          },
+          "ch8": {
+            "title": "Channel 8",
+            "type": "string",
+            "condition": {
+              "functionBody": "return !model.th.hidden;"
+            }
+          }
+        }
+      },
       "soil": {
         "type": "object",
         "properties": {
@@ -143,11 +233,67 @@
       "type": "fieldset",
       "expandable": true,
       "expanded": false,
-      "title": "Data reporting",
+      "title": "Data Report Service",
       "items": [
         "port",
         "path"
       ]
+    },
+    {
+      "type": "fieldset",
+      "expandable": true,
+      "expanded": false,
+      "title": "Weather Sensors",
+      "items": [
+        {
+          "type": "fieldset",
+          "expandable": true,
+          "expanded": false,
+          "title": "UV Index",
+          "items": [
+            "ws.uv.hidden",
+            {
+              "type": "help",
+              "helpvalue": "<p class='help-block'><br/><b><u>UV Levels</u></b><br/>0-2: Low<br/>3-5: Moderate<br/>6-7: High<br/>8-10: Very High<br/>11+: Extreme</p>",
+              "condition": {
+                "functionBody": "return !model.ws.uv.hidden;"
+              }
+          },
+            "ws.uv.threshold"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "fieldset",
+      "expandable": true,
+      "expanded": false,
+      "title": "Indoor Thermometer/Hygrometer/Barometer Sensor",
+      "items": []
+    },
+    {
+      "type": "fieldset",
+      "expandable": true,
+      "expanded": false,
+      "title": "Multi-Channel Thermometer/Hygrometer Sensors",
+      "items": [
+        "th.hidden",
+        "th.ch1",
+        "th.ch2",
+        "th.ch3",
+        "th.ch4",
+        "th.ch5",
+        "th.ch6",
+        "th.ch7",
+        "th.ch8"
+      ]
+    },
+    {
+      "type": "fieldset",
+      "expandable": true,
+      "expanded": false,
+      "title": "Lightning Detection Sensor",
+      "items": []
     },
     {
       "type": "fieldset",
@@ -170,7 +316,7 @@
       "type": "fieldset",
       "expandable": true,
       "expanded": false,
-      "title": "Leak Detectors",
+      "title": "Leak Detection Sensors",
       "items": [
         "leak.hidden",
         "leak.ch1",
