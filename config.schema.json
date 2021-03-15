@@ -40,180 +40,141 @@
                 "title": "Threshold",
                 "type": "integer",
                 "default": 6,
-                "condition": {
-                  "functionBody": "return !model.ws.uv.hidden;"
+                "description": "<p class='help-block'><br/><b><u>UV Levels</u></b><br/>0-2: Low<br/>3-5: Moderate<br/>6-7: High<br/>8-10: Very High<br/>11+: Extreme</p>"
+              }
+            }
+          },
+          "properties": {
+            "solarradiation": {
+              "title": "Solar Radiation",
+              "type": "object",
+              "properties": {
+                "hidden": {
+                  "title": "Hidden",
+                  "type": "boolean",
+                  "default": false
                 }
               }
             }
           }
-        }
-      },
-      "th": {
-        "type": "object",
-        "properties": {
-          "hidden": {
-            "title": "Hidden",
-            "type": "boolean",
-            "default": false
-          },
-          "ch1": {
-            "title": "Channel 1",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.th.hidden;"
-            }
-          },
-          "ch2": {
-            "title": "Channel 2",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.th.hidden;"
-            }
-          },
-          "ch3": {
-            "title": "Channel 3",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.th.hidden;"
-            }
-          },
-          "ch4": {
-            "title": "Channel 4",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.th.hidden;"
-            }
-          },
-          "ch5": {
-            "title": "Channel 5",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.th.hidden;"
-            }
-          },
-          "ch6": {
-            "title": "Channel 6",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.th.hidden;"
-            }
-          },
-          "ch7": {
-            "title": "Channel 7",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.th.hidden;"
-            }
-          },
-          "ch8": {
-            "title": "Channel 8",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.th.hidden;"
+        },
+        "th": {
+          "type": "object",
+          "properties": {
+            "hidden": {
+              "title": "Hidden",
+              "type": "boolean",
+              "default": false
+            },
+            "ch1": {
+              "title": "Channel 1",
+              "type": "string"
+            },
+            "ch2": {
+              "title": "Channel 2",
+              "type": "string"
+            },
+            "ch3": {
+              "title": "Channel 3",
+              "type": "string"
+            },
+            "ch4": {
+              "title": "Channel 4",
+              "type": "string"
+            },
+            "ch5": {
+              "title": "Channel 5",
+              "type": "string"
+            },
+            "ch6": {
+              "title": "Channel 6",
+              "type": "string"
+            },
+            "ch7": {
+              "title": "Channel 7",
+              "type": "string"
+            },
+            "ch8": {
+              "title": "Channel 8",
+              "type": "string"
             }
           }
-        }
-      },
-      "soil": {
-        "type": "object",
-        "properties": {
-          "hidden": {
-            "title": "Hidden",
-            "type": "boolean",
-            "default": false
-          },
-          "ch1": {
-            "title": "Channel 1",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.soil.hidden;"
-            }
-          },
-          "ch2": {
-            "title": "Channel 2",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.soil.hidden;"
-            }
-          },
-          "ch3": {
-            "title": "Channel 3",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.soil.hidden;"
-            }
-          },
-          "ch4": {
-            "title": "Channel 4",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.soil.hidden;"
-            }
-          },
-          "ch5": {
-            "title": "Channel 5",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.soil.hidden;"
-            }
-          },
-          "ch6": {
-            "title": "Channel 6",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.soil.hidden;"
-            }
-          },
-          "ch7": {
-            "title": "Channel 7",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.soil.hidden;"
-            }
-          },
-          "ch8": {
-            "title": "Channel 8",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.soil.hidden;"
+        },
+        "soil": {
+          "type": "object",
+          "properties": {
+            "hidden": {
+              "title": "Hidden",
+              "type": "boolean",
+              "default": false
+            },
+            "ch1": {
+              "title": "Channel 1",
+              "type": "string"
+            },
+            "ch2": {
+              "title": "Channel 2",
+              "type": "string"
+            },
+            "ch3": {
+              "title": "Channel 3",
+              "type": "string"
+            },
+            "ch4": {
+              "title": "Channel 4",
+              "type": "string"
+            },
+            "ch5": {
+              "title": "Channel 5",
+              "type": "string"
+            },
+            "ch6": {
+              "title": "Channel 6",
+              "type": "string"
+            },
+            "ch7": {
+              "title": "Channel 7",
+              "type": "string"
+            },
+            "ch8": {
+              "title": "Channel 8",
+              "type": "string"
             }
           }
-        }
-      },
-      "leak": {
-        "type": "object",
-        "properties": {
-          "hidden": {
-            "title": "Hidden",
-            "type": "boolean",
-            "default": false
-          },
-          "ch1": {
-            "title": "Channel 1",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.leak.hidden;"
+        },
+        "leak": {
+          "type": "object",
+          "properties": {
+            "hidden": {
+              "title": "Hidden",
+              "type": "boolean",
+              "default": false
+            },
+            "ch1": {
+              "title": "Channel 1",
+              "type": "string"
+            },
+            "ch2": {
+              "title": "Channel 2",
+              "type": "string"
+            },
+            "ch3": {
+              "title": "Channel 3",
+              "type": "string"
+            },
+            "ch4": {
+              "title": "Channel 4",
+              "type": "string"
             }
           },
-          "ch2": {
-            "title": "Channel 2",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.leak.hidden;"
-            }
-          },
-          "ch3": {
-            "title": "Channel 3",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.leak.hidden;"
-            }
-          },
-          "ch4": {
-            "title": "Channel 4",
-            "type": "string",
-            "condition": {
-              "functionBody": "return !model.leak.hidden;"
+          "lightning": {
+            "type": "object",
+            "properties": {
+              "hidden": {
+                "title": "Hidden",
+                "type": "boolean",
+                "default": false
+              }
             }
           }
         }
@@ -253,13 +214,32 @@
           "items": [
             "ws.uv.hidden",
             {
-              "type": "help",
-              "helpvalue": "<p class='help-block'><br/><b><u>UV Levels</u></b><br/>0-2: Low<br/>3-5: Moderate<br/>6-7: High<br/>8-10: Very High<br/>11+: Extreme</p>",
+              "type": "fieldset",
+              "notitle": true,
               "condition": {
                 "functionBody": "return !model.ws.uv.hidden;"
-              }
-          },
-            "ws.uv.threshold"
+              },
+              "items": [
+                "ws.uv.threshold"
+              ]
+            }
+          ]
+        },
+        {
+          "type": "fieldset",
+          "expandable": true,
+          "expanded": false,
+          "title": "Solar Radiation",
+          "items": [
+            "ws.solarradiation.hidden",
+            {
+              "type": "fieldset",
+              "notitle": true,
+              "condition": {
+                "functionBody": "return !model.ws.solarradiation.hidden;"
+              },
+              "items": []
+            }
           ]
         }
       ]
@@ -278,14 +258,23 @@
       "title": "Multi-Channel Thermometer/Hygrometer Sensors",
       "items": [
         "th.hidden",
-        "th.ch1",
-        "th.ch2",
-        "th.ch3",
-        "th.ch4",
-        "th.ch5",
-        "th.ch6",
-        "th.ch7",
-        "th.ch8"
+        {
+          "type": "fieldset",
+          "notitle": true,
+          "condition": {
+            "functionBody": "return !model.th.hidden;"
+          },
+          "items": [
+            "th.ch1",
+            "th.ch2",
+            "th.ch3",
+            "th.ch4",
+            "th.ch5",
+            "th.ch6",
+            "th.ch7",
+            "th.ch8"
+          ]
+        }
       ]
     },
     {
@@ -293,7 +282,17 @@
       "expandable": true,
       "expanded": false,
       "title": "Lightning Detection Sensor",
-      "items": []
+      "items": [
+        "lightning.hidden",
+        {
+          "type": "fieldset",
+          "notitle": true,
+          "condition": {
+            "functionBody": "return !model.lightning.hidden;"
+          },
+          "items": []
+        }
+      ]
     },
     {
       "type": "fieldset",
@@ -302,14 +301,23 @@
       "title": "Soil Moisture Sensors",
       "items": [
         "soil.hidden",
-        "soil.ch1",
-        "soil.ch2",
-        "soil.ch3",
-        "soil.ch4",
-        "soil.ch5",
-        "soil.ch6",
-        "soil.ch7",
-        "soil.ch8"
+        {
+          "type": "fieldset",
+          "notitle": true,
+          "condition": {
+            "functionBody": "return !model.soil.hidden;"
+          },
+          "items": [
+            "soil.ch1",
+            "soil.ch2",
+            "soil.ch3",
+            "soil.ch4",
+            "soil.ch5",
+            "soil.ch6",
+            "soil.ch7",
+            "soil.ch8"
+          ]
+        }
       ]
     },
     {
@@ -319,10 +327,19 @@
       "title": "Leak Detection Sensors",
       "items": [
         "leak.hidden",
-        "leak.ch1",
-        "leak.ch2",
-        "leak.ch3",
-        "leak.ch4"
+        {
+          "type": "fieldset",
+          "notitle": true,
+          "condition": {
+            "functionBody": "return !model.leak.hidden;"
+          },
+          "items": [
+            "leak.ch1",
+            "leak.ch2",
+            "leak.ch3",
+            "leak.ch4"
+          ]
+        }
       ]
     }
   ]
