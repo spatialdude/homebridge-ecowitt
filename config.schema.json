@@ -5,9 +5,12 @@
   "schema": {
     "type": "object",
     "properties": {
+      "name": {
+        "title": "Name",
+        "type": "string"
+      },
       "mac": {
         "title": "MAC Address",
-        "description": "Base station MAC address",
         "type": "string",
         "pattern": "^([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2}$",
         "required": true
@@ -27,8 +30,12 @@
       "ws": {
         "type": "object",
         "properties": {
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean",
+            "default": false
+          },
           "uv": {
-            "title": "UV Index",
             "type": "object",
             "properties": {
               "hidden": {
@@ -44,130 +51,27 @@
               }
             }
           },
-          "properties": {
-            "solarradiation": {
-              "title": "Solar Radiation",
-              "type": "object",
-              "properties": {
-                "hidden": {
-                  "title": "Hidden",
-                  "type": "boolean",
-                  "default": false
-                }
+          "solarradiation": {
+            "type": "object",
+            "properties": {
+              "hidden": {
+                "title": "Hidden",
+                "type": "boolean",
+                "default": false
               }
             }
-          }
-        },
-        "th": {
-          "type": "object",
-          "properties": {
-            "hidden": {
-              "title": "Hidden",
-              "type": "boolean",
-              "default": false
-            },
-            "ch1": {
-              "title": "Channel 1",
-              "type": "string"
-            },
-            "ch2": {
-              "title": "Channel 2",
-              "type": "string"
-            },
-            "ch3": {
-              "title": "Channel 3",
-              "type": "string"
-            },
-            "ch4": {
-              "title": "Channel 4",
-              "type": "string"
-            },
-            "ch5": {
-              "title": "Channel 5",
-              "type": "string"
-            },
-            "ch6": {
-              "title": "Channel 6",
-              "type": "string"
-            },
-            "ch7": {
-              "title": "Channel 7",
-              "type": "string"
-            },
-            "ch8": {
-              "title": "Channel 8",
-              "type": "string"
-            }
-          }
-        },
-        "soil": {
-          "type": "object",
-          "properties": {
-            "hidden": {
-              "title": "Hidden",
-              "type": "boolean",
-              "default": false
-            },
-            "ch1": {
-              "title": "Channel 1",
-              "type": "string"
-            },
-            "ch2": {
-              "title": "Channel 2",
-              "type": "string"
-            },
-            "ch3": {
-              "title": "Channel 3",
-              "type": "string"
-            },
-            "ch4": {
-              "title": "Channel 4",
-              "type": "string"
-            },
-            "ch5": {
-              "title": "Channel 5",
-              "type": "string"
-            },
-            "ch6": {
-              "title": "Channel 6",
-              "type": "string"
-            },
-            "ch7": {
-              "title": "Channel 7",
-              "type": "string"
-            },
-            "ch8": {
-              "title": "Channel 8",
-              "type": "string"
-            }
-          }
-        },
-        "leak": {
-          "type": "object",
-          "properties": {
-            "hidden": {
-              "title": "Hidden",
-              "type": "boolean",
-              "default": false
-            },
-            "ch1": {
-              "title": "Channel 1",
-              "type": "string"
-            },
-            "ch2": {
-              "title": "Channel 2",
-              "type": "string"
-            },
-            "ch3": {
-              "title": "Channel 3",
-              "type": "string"
-            },
-            "ch4": {
-              "title": "Channel 4",
-              "type": "string"
+          },
+          "wind": {
+            "type": "object",
+            "properties": {
+              "hidden": {
+                "title": "Hidden",
+                "type": "boolean",
+                "default": false
+              }
             }
           },
-          "lightning": {
+          "rain": {
             "type": "object",
             "properties": {
               "hidden": {
@@ -178,26 +82,174 @@
             }
           }
         }
+      },
+      "th": {
+        "type": "object",
+        "properties": {
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean",
+            "default": false
+          },
+          "name1": {
+            "title": "Channel 1",
+            "type": "string"
+          },
+          "name2": {
+            "title": "Channel 2",
+            "type": "string"
+          },
+          "name3": {
+            "title": "Channel 3",
+            "type": "string"
+          },
+          "name4": {
+            "title": "Channel 4",
+            "type": "string"
+          },
+          "name5": {
+            "title": "Channel 5",
+            "type": "string"
+          },
+          "name6": {
+            "title": "Channel 6",
+            "type": "string"
+          },
+          "name7": {
+            "title": "Channel 7",
+            "type": "string"
+          },
+          "name8": {
+            "title": "Channel 8",
+            "type": "string"
+          }
+        }
+      },
+      "soil": {
+        "type": "object",
+        "properties": {
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean",
+            "default": false
+          },
+          "name1": {
+            "title": "Channel 1",
+            "type": "string"
+          },
+          "name2": {
+            "title": "Channel 2",
+            "type": "string"
+          },
+          "name3": {
+            "title": "Channel 3",
+            "type": "string"
+          },
+          "name4": {
+            "title": "Channel 4",
+            "type": "string"
+          },
+          "name5": {
+            "title": "Channel 5",
+            "type": "string"
+          },
+          "name6": {
+            "title": "Channel 6",
+            "type": "string"
+          },
+          "name7": {
+            "title": "Channel 7",
+            "type": "string"
+          },
+          "name8": {
+            "title": "Channel 8",
+            "type": "string"
+          }
+        }
+      },
+      "leak": {
+        "type": "object",
+        "properties": {
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean",
+            "default": false
+          },
+          "name1": {
+            "title": "Channel 1",
+            "type": "string"
+          },
+          "name2": {
+            "title": "Channel 2",
+            "type": "string"
+          },
+          "name3": {
+            "title": "Channel 3",
+            "type": "string"
+          },
+          "name4": {
+            "title": "Channel 4",
+            "type": "string"
+          }
+        }
+      },
+      "pm25": {
+        "type": "object",
+        "properties": {
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean",
+            "default": false
+          },
+          "name1": {
+            "title": "Channel 1",
+            "type": "string"
+          },
+          "name2": {
+            "title": "Channel 2",
+            "type": "string"
+          },
+          "name3": {
+            "title": "Channel 3",
+            "type": "string"
+          },
+          "name4": {
+            "title": "Channel 4",
+            "type": "string"
+          }
+        }
+      },
+      "lightning": {
+        "type": "object",
+        "properties": {
+          "hidden": {
+            "title": "Hidden",
+            "type": "boolean",
+            "default": false
+          }
+        }
       }
     }
   },
   "form": [
     {
       "type": "fieldset",
-      "expandable": false,
-      "title": "Base Station",
-      "items": [
-        "mac"
-      ]
-    },
-    {
-      "type": "fieldset",
       "expandable": true,
       "expanded": false,
-      "title": "Data Report Service",
+      "title": "Base Station",
       "items": [
-        "port",
-        "path"
+        "name",
+        "mac",
+        {
+          "type": "fieldset",
+          "expandable": true,
+          "expanded": false,
+          "title": "Data Report Service",
+          "items": [
+            "port",
+            "path"
+          ]
+        }
       ]
     },
     {
@@ -206,39 +258,49 @@
       "expanded": false,
       "title": "Weather Sensors",
       "items": [
+        "ws.hidden",
         {
           "type": "fieldset",
-          "expandable": true,
-          "expanded": false,
-          "title": "UV Index",
+          "notitle": true,
+          "condition": {
+            "functionBody": "return !model.ws.hidden;"
+          },
           "items": [
-            "ws.uv.hidden",
             {
               "type": "fieldset",
-              "notitle": true,
-              "condition": {
-                "functionBody": "return !model.ws.uv.hidden;"
-              },
+              "expandable": true,
+              "expanded": false,
+              "title": "UV Index",
               "items": [
-                "ws.uv.threshold"
+                "ws.uv.hidden",
+                {
+                  "type": "fieldset",
+                  "notitle": true,
+                  "condition": {
+                    "functionBody": "return !model.ws.uv.hidden;"
+                  },
+                  "items": [
+                    "ws.uv.threshold"
+                  ]
+                }
               ]
-            }
-          ]
-        },
-        {
-          "type": "fieldset",
-          "expandable": true,
-          "expanded": false,
-          "title": "Solar Radiation",
-          "items": [
-            "ws.solarradiation.hidden",
+            },
             {
               "type": "fieldset",
-              "notitle": true,
-              "condition": {
-                "functionBody": "return !model.ws.solarradiation.hidden;"
-              },
-              "items": []
+              "expandable": true,
+              "expanded": false,
+              "title": "Solar Radiation",
+              "items": [
+                "ws.solarradiation.hidden",
+                {
+                  "type": "fieldset",
+                  "notitle": true,
+                  "condition": {
+                    "functionBody": "return !model.ws.solarradiation.hidden;"
+                  },
+                  "items": []
+                }
+              ]
             }
           ]
         }
@@ -265,14 +327,14 @@
             "functionBody": "return !model.th.hidden;"
           },
           "items": [
-            "th.ch1",
-            "th.ch2",
-            "th.ch3",
-            "th.ch4",
-            "th.ch5",
-            "th.ch6",
-            "th.ch7",
-            "th.ch8"
+            "th.name1",
+            "th.name2",
+            "th.name3",
+            "th.name4",
+            "th.name5",
+            "th.name6",
+            "th.name7",
+            "th.name8"
           ]
         }
       ]
@@ -308,14 +370,14 @@
             "functionBody": "return !model.soil.hidden;"
           },
           "items": [
-            "soil.ch1",
-            "soil.ch2",
-            "soil.ch3",
-            "soil.ch4",
-            "soil.ch5",
-            "soil.ch6",
-            "soil.ch7",
-            "soil.ch8"
+            "soil.name1",
+            "soil.name2",
+            "soil.name3",
+            "soil.name4",
+            "soil.name5",
+            "soil.name6",
+            "soil.name7",
+            "soil.name8"
           ]
         }
       ]
@@ -334,10 +396,32 @@
             "functionBody": "return !model.leak.hidden;"
           },
           "items": [
-            "leak.ch1",
-            "leak.ch2",
-            "leak.ch3",
-            "leak.ch4"
+            "leak.name1",
+            "leak.name2",
+            "leak.name3",
+            "leak.name4"
+          ]
+        }
+      ]
+    },
+    {
+      "type": "fieldset",
+      "expandable": true,
+      "expanded": false,
+      "title": "PM2.5 Air Quility Sensors",
+      "items": [
+        "pm25.hidden",
+        {
+          "type": "fieldset",
+          "notitle": true,
+          "condition": {
+            "functionBody": "return !model.pm25.hidden;"
+          },
+          "items": [
+            "pm25.name1",
+            "pm25.name2",
+            "pm25.name3",
+            "pm25.name4"
           ]
         }
       ]

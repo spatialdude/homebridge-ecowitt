@@ -1,6 +1,6 @@
 import { Service, PlatformAccessory /*ServiceEventTypes*/ } from 'homebridge';
 import { EcowittPlatform } from './EcowittPlatform';
-import { THAccessory } from './THAccessory';
+import { ThermoHygroSensor } from './ThermoHygroSensor';
 
 
 // https://en.wikipedia.org/wiki/Ultraviolet_index
@@ -13,8 +13,8 @@ const uvInfos = [
   { level: 11, risk: 'Extreme' },
 ];
 
-export class WH65Accessory extends THAccessory {
-  protected solarRadiation: Service;
+export class WH65 extends ThermoHygroSensor {
+  protected solarRadiation!: Service;
   protected uvIndex!: Service;
   protected uvThreshold: number;
 
@@ -29,6 +29,9 @@ export class WH65Accessory extends THAccessory {
   ) {
     super(platform, accessory);
 
+    this.setModel('WH65');
+    this.setProductData('Solar Powererd 7-in-1 Outdoor Sensor');
+
     this.setName(this.temperatureSensor, 'Outdoor Temperature');
     this.setName(this.humiditySensor, 'Outdoor Humidity');
 
@@ -37,14 +40,16 @@ export class WH65Accessory extends THAccessory {
 
     // Solar Radiation
 
-    this.setName(this.solarRadiation, 'Solar Radiation');
+    if (!this.platform.config.ws?.solarradiation?.hidden) {
+      this.setName(this.solarRadiation, 'Solar Radiation');
 
-    this.solarRadiation
-      .getCharacteristic(this.platform.Characteristic.CurrentAmbientLightLevel)
-      .setProps({
-        minValue: 0,
-        maxValue: 150000,
-      });
+      this.solarRadiation
+        .getCharacteristic(this.platform.Characteristic.CurrentAmbientLightLevel)
+        .setProps({
+          minValue: 0,
+          maxValue: 150000,
+        });
+    }
 
     // UV Sensor
 
@@ -89,11 +94,13 @@ export class WH65Accessory extends THAccessory {
     this.updateHumidity(dataReport.humidity);
     this.updateStatusLowBattery(this.humiditySensor, lowBattery);
 
-    this.solarRadiation.updateCharacteristic(
-      this.platform.Characteristic.CurrentAmbientLightLevel,
-      Math.round(this.toLux(dataReport.solarradiation)));
-    this.updateStatusLowBattery(this.solarRadiation, lowBattery);
-
+    if (this.solarRadiation) {
+      this.updateName(this.solarRadiation, `Solar Radiation: ${dataReport.solarradiation} W/m²`);
+      this.solarRadiation.updateCharacteristic(
+        this.platform.Characteristic.CurrentAmbientLightLevel,
+        Math.round(this.toLux(dataReport.solarradiation)));
+      this.updateStatusLowBattery(this.solarRadiation, lowBattery);
+    }
 
     if (this.uvIndex) {
       const uv = parseInt(dataReport.uv);

@@ -2,7 +2,7 @@ import { Service, PlatformAccessory } from 'homebridge';
 import { EcowittPlatform } from './EcowittPlatform';
 import { EcowittAccessory } from './EcowittAccessory';
 
-export class WH57Accessory extends EcowittAccessory {
+export class WH57 extends EcowittAccessory {
   protected battery: Service;
   protected lightningSensor: Service;
   protected lightningDistance: Service;
@@ -13,6 +13,9 @@ export class WH57Accessory extends EcowittAccessory {
     protected readonly accessory: PlatformAccessory,
   ) {
     super(platform, accessory);
+
+    this.setModel('WH57');
+    this.setProductData('Lightning Detector Sensor');
 
     this.lightningDistance = this.accessory.getService(this.platform.Service.OccupancySensor)
       || this.accessory.addService(this.platform.Service.OccupancySensor);

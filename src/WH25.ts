@@ -1,15 +1,17 @@
 import { PlatformAccessory } from 'homebridge';
 import { EcowittPlatform } from './EcowittPlatform';
-import { THBAccessory } from './THBAccessory';
+import { ThermoHygroBaroSensor } from './ThermoHygroBaroSensor';
 
 
-export class WH25Accessory extends THBAccessory {
+export class WH25 extends ThermoHygroBaroSensor {
 
   constructor(
     protected readonly platform: EcowittPlatform,
     protected readonly accessory: PlatformAccessory,
   ) {
     super(platform, accessory);
+
+    this.setModel('WH25');
 
     this.setName(this.temperatureSensor, 'Indoor Temperature');
     this.setName(this.humiditySensor, 'Indoor Humidity');
@@ -34,7 +36,7 @@ export class WH25Accessory extends THBAccessory {
     this.updateAbsolutePressure(dataReport.baromabsin);
     this.updateStatusLowBattery(this.absolutePressureSensor, lowBattery);
 
-    this.updateRelativePressue(dataReport.baromrelin);
+    this.updateRelativePressure(dataReport.baromrelin);
     this.updateStatusLowBattery(this.relativePressureSensor, lowBattery);
   }
 }

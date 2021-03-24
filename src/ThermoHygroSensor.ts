@@ -2,8 +2,7 @@ import { Service, PlatformAccessory } from 'homebridge';
 import { EcowittPlatform } from './EcowittPlatform';
 import { EcowittAccessory } from './EcowittAccessory';
 
-
-export class THAccessory extends EcowittAccessory {
+export class ThermoHygroSensor extends EcowittAccessory {
   protected temperatureSensor: Service;
   protected humiditySensor: Service;
 

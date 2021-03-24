@@ -1,6 +1,10 @@
 import { PlatformAccessory, /*CharacteristicValue,*/ Service } from 'homebridge';
 import { EcowittPlatform } from './EcowittPlatform';
 
+import * as Utils from './Utils.js';
+
+//------------------------------------------------------------------------------
+
 export class EcowittAccessory {
 
   constructor(
@@ -8,21 +12,39 @@ export class EcowittAccessory {
     protected readonly accessory: PlatformAccessory,
   ) {
 
-    this.platform.log.info('info:', JSON.stringify(this.accessory.context.sensorInfo, undefined, 2));
-
-    // set accessory information
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.Manufacturer, platform.wxStationInfo.manufacturer)
-      .setCharacteristic(this.platform.Characteristic.ProductData, platform.wxStationInfo.frequency)
-      .setCharacteristic(this.platform.Characteristic.Name, accessory.context.sensorInfo.displayName)
-      .setCharacteristic(this.platform.Characteristic.ConfiguredName, accessory.context.sensorInfo.displayName)
-      .setCharacteristic(this.platform.Characteristic.Model, accessory.context.sensorInfo.name)//platform.wxStationInfo.model)
-      .setCharacteristic(this.platform.Characteristic.SerialNumber, platform.wxStationInfo.serialNumber)
-      .setCharacteristic(this.platform.Characteristic.HardwareRevision, platform.wxStationInfo.model)
-      .setCharacteristic(this.platform.Characteristic.SoftwareRevision, platform.wxStationInfo.softwareRevision);
+      .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Ecowitt');
   }
 
-  //---------------------------------------------------------------------------
+  //----------------------------------------------------------------------------
+
+  setModel(model: string) {
+    this.accessory.getService(this.platform.Service.AccessoryInformation)!
+      .setCharacteristic(this.platform.Characteristic.Model, model);
+  }
+
+  //----------------------------------------------------------------------------
+
+  setProductData(productData: string) {
+    this.accessory.getService(this.platform.Service.AccessoryInformation)!
+      .setCharacteristic(this.platform.Characteristic.ProductData, productData);
+  }
+
+  //----------------------------------------------------------------------------
+
+  setConfiguredName(configuredName: string) {
+    this.accessory.getService(this.platform.Service.AccessoryInformation)!
+      .setCharacteristic(this.platform.Characteristic.ConfiguredName, configuredName);
+  }
+
+  //----------------------------------------------------------------------------
+
+  setSerialNumber(serialNumber: string) {
+    this.accessory.getService(this.platform.Service.AccessoryInformation)!
+      .setCharacteristic(this.platform.Characteristic.SerialNumber, serialNumber);
+  }
+
+  //----------------------------------------------------------------------------
 
   update(dataReport) {
     this.platform.log.error('Update not implemented:', dataReport);
@@ -103,7 +125,7 @@ export class EcowittAccessory {
 
   //---------------------------------------------------------------------------
 
-  addBattery(name: string) {
+  addBattery(name: string, chargeable = false) {
     const battery = this.accessory.getService(this.platform.Service.Battery)
       || this.accessory.addService(this.platform.Service.Battery);
 
@@ -113,7 +135,9 @@ export class EcowittAccessory {
 
     battery.setCharacteristic(
       this.platform.Characteristic.ChargingState,
-      this.platform.Characteristic.ChargingState.NOT_CHARGEABLE);
+      chargeable
+        ? this.platform.Characteristic.ChargingState.NOT_CHARGING
+        : this.platform.Characteristic.ChargingState.NOT_CHARGEABLE);
 
     battery.setCharacteristic(
       this.platform.Characteristic.StatusLowBattery,
@@ -143,11 +167,7 @@ export class EcowittAccessory {
   updateCurrentTemperature(service: Service, tempf) {
     service.updateCharacteristic(
       this.platform.Characteristic.CurrentTemperature,
-      this.toCelcius(tempf));
-  }
-
-  toCelcius(fahrenheit): number {
-    return (parseFloat(fahrenheit) - 32) * 5 / 9;
+      Utils.toCelcius(tempf));
   }
 
   //---------------------------------------------------------------------------
@@ -156,10 +176,6 @@ export class EcowittAccessory {
     service.updateCharacteristic(
       this.platform.Characteristic.CurrentRelativeHumidity,
       parseFloat(humidity));
-  }
-
-  tohPa(inHg): number {
-    return parseFloat(inHg) * 33.8638;
   }
 
   //---------------------------------------------------------------------------

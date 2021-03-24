@@ -2,16 +2,18 @@ import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, 
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 import { EcowittAccessory } from './EcowittAccessory';
-import { GW1000Accessory } from './GW1000Accessory';
-import { WH25Accessory } from './WH25Accessory';
-import { WH31Accessory } from './WH31Accessory';
-import { WH65Accessory } from './WH65Accessory';
-import { WH55Accessory } from './WH55Accessory';
-import { WH57Accessory } from './WH57Accessory';
-import { WH51Accessory } from './WH51Accessory';
+import { GW1000 } from './GW1000';
+import { WH25 } from './WH25';
+import { WH31 } from './WH31';
+import { WH41 } from './WH41';
+import { WH65 } from './WH65';
+import { WH55 } from './WH55';
+import { WH57 } from './WH57';
+import { WH51 } from './WH51';
 
 import * as restify from 'restify';
 import * as crypto from 'crypto';
+import { platform } from 'node:os';
 //import { timeStamp } from 'node:console';
 //import { type } from 'node:os';
 
@@ -22,46 +24,47 @@ import * as crypto from 'crypto';
 // }
 
 interface StationInfo {
-  manufacturer: string;
   model: string;
   serialNumber: string;
+  hardwareRevision: string;
   softwareRevision: string;
+  firmwareRevision: string;
   frequency: string;
   PASSKEY: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   sensors: any [];
 }
 
-const SensorInfos = {
-  GW1000: {
-    name: 'GW1000',
-    displayName: 'Gateway',
-  },
-  WH25: {
-    name: 'WH25',
-    displayName: 'Thermometer/Hygrometer/Barometer',
-  },
-  WH31: {
-    name: 'WH31',
-    displayName: 'Thermometer/Hygrometer',
-  },
-  WH65: {
-    name: 'WH65',
-    displayName: '7 in 1 Weather Sensor',
-  },
-  WH55: {
-    name: 'WH55',
-    displayName: 'Leak Detector',
-  },
-  WH57: {
-    name: 'WH57',
-    displayName: 'Lightning Sensor',
-  },
-  WH51: {
-    name: 'WH51',
-    displayName: 'Soil Moisture Sensor',
-  },
-};
+// const SensorInfos = {
+//   GW1000: {
+//     name: 'GW1000',
+//     displayName: 'Gateway',
+//   },
+//   WH25: {
+//     name: 'WH25',
+//     displayName: 'Thermometer/Hygrometer/Barometer',
+//   },
+//   WH31: {
+//     name: 'WH31',
+//     displayName: 'Thermometer/Hygrometer',
+//   },
+//   WH65: {
+//     name: 'WH65',
+//     displayName: '7 in 1 Weather Sensor',
+//   },
+//   WH55: {
+//     name: 'WH55',
+//     displayName: 'Leak Detector',
+//   },
+//   WH57: {
+//     name: 'WH57',
+//     displayName: 'Lightning Sensor',
+//   },
+//   WH51: {
+//     name: 'WH51',
+//     displayName: 'Soil Moisture Sensor',
+//   },
+// };
 
 /**
  * HomebridgePlatform
@@ -79,10 +82,11 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
   public wxDataReport = null;
 
   public wxStationInfo: StationInfo = {
-    manufacturer: 'Ecowitt',
     model: '',
     serialNumber: this.config.mac,
+    hardwareRevision: '',
     softwareRevision: '',
+    firmwareRevision: '',
     frequency: '',
     PASSKEY: crypto
       .createHash('md5')
@@ -170,6 +174,12 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
           type: type,
           channel: channel,
         });
+
+      if (channel) {
+        this.log.info(`Discovered sensor: ${type} channel: ${channel}`);
+      } else {
+        this.log.info(`Discovered sensor: ${type}`);
+      }
     }
   }
 
@@ -180,10 +190,14 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
 
   wxRegisterAccessories(dataReport) {
     this.wxStationInfo.model = dataReport.model;
-    this.wxStationInfo.softwareRevision = dataReport.stationtype;
+    this.wxStationInfo.hardwareRevision = dataReport.stationtype;
     this.wxStationInfo.frequency = dataReport.freq;
 
-    this.log.info('Checking for sensors');
+    const version = this.wxStationInfo.hardwareRevision.match(/GW1000_(.*)/);
+    this.wxStationInfo.firmwareRevision = Array.isArray(version) ? version[1] : '';
+
+
+    this.log.info('Discovering sensors');
 
     this.addSensorType(/GW1000/.test(dataReport.model), 'GW1000');
     this.addSensorType(dataReport.wh25batt !== undefined, 'WH25');
@@ -193,6 +207,12 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
     if (!this.config?.th?.hidden) {
       for (let channel = 1; channel <= 8; channel++) {
         this.addSensorType(dataReport[`batt${channel}`] !== undefined, 'WH31', channel);
+      }
+    }
+
+    if (!this.config?.pm25?.hidden) {
+      for (let channel = 1; channel <= 4; channel++) {
+        this.addSensorType(dataReport[`pm25batt${channel}`] !== undefined, 'WH41', channel);
       }
     }
 
@@ -219,7 +239,7 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
 
       this.log.info('sensorId:', sensorId, 'uuid:', uuid);
 
-      const sensorInfo = SensorInfos[sensor.type];
+      //      const sensorInfo = SensorInfos[sensor.type];
 
       const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
 
@@ -245,48 +265,52 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
         // the accessory does not yet exist, so we need to create it
         this.log.info('Adding new accessory type:', sensor.type, 'channel:', sensor.channel);
 
-        // create a new accessory
-        const accessory = new this.api.platformAccessory(sensorInfo.name, uuid);
+        // create a new sensor accessory
+        const accessory = new this.api.platformAccessory(sensor.type, uuid);
 
         // store a copy of the device object in the `accessory.context`
         // the `context` property can be used to store any data about the accessory you may need
-        accessory.context.sensorInfo = sensorInfo;
+        //accessory.context.sensorInfo = sensorInfo;
 
         switch (sensor.type) {
           case 'GW1000':
-            sensor.accessory = new GW1000Accessory(this, accessory);
+            sensor.accessory = new GW1000(this, accessory);
             break;
 
           case 'WH25':
-            sensor.accessory = new WH25Accessory(this, accessory);
+            sensor.accessory = new WH25(this, accessory);
             break;
 
           case 'WH31':
-            sensor.accessory = new WH31Accessory(this, accessory, sensor.channel);
+            sensor.accessory = new WH31(this, accessory, sensor.channel);
+            break;
+
+          case 'WH41':
+            sensor.accessory = new WH41(this, accessory, sensor.channel);
             break;
 
           case 'WH51':
-            sensor.accessory = new WH51Accessory(this, accessory, sensor.channel);
+            sensor.accessory = new WH51(this, accessory, sensor.channel);
             break;
 
           case 'WH55':
-            sensor.accessory = new WH55Accessory(this, accessory, sensor.channel);
+            sensor.accessory = new WH55(this, accessory, sensor.channel);
             break;
 
           case 'WH57':
-            sensor.accessory = new WH57Accessory(this, accessory);
+            sensor.accessory = new WH57(this, accessory);
             break;
 
           case 'WH65':
-            sensor.accessory = new WH65Accessory(this, accessory);
+            sensor.accessory = new WH65(this, accessory);
             break;
 
           default:
-            sensor.accessory = new EcowittAccessory(this, accessory);
+            this.log.error('Unhandled sensor type:', sensor.type);
             break;
         }
 
-        // link the accessory to your platform
+        // link the sensor accessory to platform
         this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       }
     }

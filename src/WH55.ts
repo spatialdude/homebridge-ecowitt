@@ -2,9 +2,10 @@ import { Service, PlatformAccessory } from 'homebridge';
 import { EcowittPlatform } from './EcowittPlatform';
 import { EcowittAccessory } from './EcowittAccessory';
 
-export class WH55Accessory extends EcowittAccessory {
+export class WH55 extends EcowittAccessory {
   protected battery: Service;
   protected leakSensor: Service;
+  protected name: string;
 
   constructor(
     protected readonly platform: EcowittPlatform,
@@ -13,13 +14,19 @@ export class WH55Accessory extends EcowittAccessory {
   ) {
     super(platform, accessory);
 
+    this.setModel('WH55');
+    this.setProductData('Wireless Multi-channel Water Leak Detection Sensor');
+    this.setSerialNumber(`CH${this.channel}`);
+
+    this.name = this.platform.config?.leak?.[`name${this.channel}`] || `🚰Detector CH${this.channel}`;
+
     this.leakSensor = this.accessory.getService(this.platform.Service.LeakSensor)
       || this.accessory.addService(this.platform.Service.LeakSensor);
 
-    this.setName(this.leakSensor, `🚰Detector ${this.channel}`);
+    this.setName(this.leakSensor, this.name);
     this.setStatusActive(this.leakSensor, false);
 
-    this.battery = this.addBattery(`🚰${this.channel} Battery`);
+    this.battery = this.addBattery(this.name);
   }
 
   update(dataReport) {

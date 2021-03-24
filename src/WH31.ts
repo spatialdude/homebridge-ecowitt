@@ -1,9 +1,11 @@
 import { PlatformAccessory } from 'homebridge';
 import { EcowittPlatform } from './EcowittPlatform';
-import { THAccessory } from './THAccessory';
+import { ThermoHygroSensor } from './ThermoHygroSensor';
 
 
-export class WH31Accessory extends THAccessory {
+export class WH31 extends ThermoHygroSensor {
+  protected name: string;
+
   constructor(
     protected readonly platform: EcowittPlatform,
     protected readonly accessory: PlatformAccessory,
@@ -11,8 +13,14 @@ export class WH31Accessory extends THAccessory {
   ) {
     super(platform, accessory);
 
-    this.setName(this.temperatureSensor, `Indoor Temperature ${this.channel}`);
-    this.setName(this.humiditySensor, `Indoor Humidity ${this.channel}`);
+    this.setModel('WH31');
+    this.setProductData(`${platform.wxStationInfo.frequency}Hz Wireless Multi-channel Thermometer and Hygrometer Sensor`);
+    this.setSerialNumber(`CH${this.channel}`);
+
+    this.name = this.platform.config?.th?.[`name${this.channel}`] || `T&H CH${this.channel}`;
+
+    this.setName(this.temperatureSensor, this.name);
+    this.setName(this.humiditySensor, this.name);
   }
 
   update(dataReport) {
