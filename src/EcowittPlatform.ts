@@ -35,37 +35,6 @@ interface StationInfo {
   sensors: any [];
 }
 
-// const SensorInfos = {
-//   GW1000: {
-//     name: 'GW1000',
-//     displayName: 'Gateway',
-//   },
-//   WH25: {
-//     name: 'WH25',
-//     displayName: 'Thermometer/Hygrometer/Barometer',
-//   },
-//   WH31: {
-//     name: 'WH31',
-//     displayName: 'Thermometer/Hygrometer',
-//   },
-//   WH65: {
-//     name: 'WH65',
-//     displayName: '7 in 1 Weather Sensor',
-//   },
-//   WH55: {
-//     name: 'WH55',
-//     displayName: 'Leak Detector',
-//   },
-//   WH57: {
-//     name: 'WH57',
-//     displayName: 'Lightning Sensor',
-//   },
-//   WH51: {
-//     name: 'WH51',
-//     displayName: 'Soil Moisture Sensor',
-//   },
-// };
-
 /**
  * HomebridgePlatform
  * This class is the main constructor for your plugin, this is where you should
@@ -135,6 +104,15 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
       });
     });
   }
+
+  //----------------------------------------------------------------------------
+
+  public serviceUuid(name: string) {
+    const serviceId = this.config.mac + '_' + name;
+    return this.api.hap.uuid.generate(serviceId);
+  }
+
+  //----------------------------------------------------------------------------
 
   /**
    * This function is invoked when homebridge restores cached accessories from disk at startup.
@@ -239,8 +217,6 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
 
       this.log.info('sensorId:', sensorId, 'uuid:', uuid);
 
-      //      const sensorInfo = SensorInfos[sensor.type];
-
       const existingAccessory = this.accessories.find(accessory => accessory.UUID === uuid);
 
       if (existingAccessory) {
@@ -310,7 +286,7 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
             break;
         }
 
-        // link the sensor accessory to platform
+        // link the sensor accessory to the platform
         this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       }
     }

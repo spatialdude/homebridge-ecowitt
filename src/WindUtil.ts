@@ -3,19 +3,7 @@
 
 //------------------------------------------------------------------------------
 
-export function toCelcius(fahrenheit): number {
-  return (parseFloat(fahrenheit) - 32) * 5 / 9;
-}
-
-//------------------------------------------------------------------------------
-
-export function tohPa(inHg): number {
-  return parseFloat(inHg) * 33.8638;
-}
-
-//------------------------------------------------------------------------------
-
-const kWindSectors = [
+const kSectors = [
   'N',
   'NNE',
   'NE',
@@ -104,7 +92,7 @@ const kBeaufortScale = [
   },
   {
     force: 7,
-    description: 'Moderate Gale',
+    description: 'Near Gale',
     kts: [28, 33],
     mph: [32, 38],
     kmh: [50, 61],
@@ -120,7 +108,7 @@ const kBeaufortScale = [
   },
   {
     force: 9,
-    description: 'Severe Gale',
+    description: 'Strong Gale',
     kts: [41, 47],
     mph: [47, 54],
     kmh: [75, 88],
@@ -187,14 +175,14 @@ export function toBeafort(mph): Beaufort {
 
 //------------------------------------------------------------------------------
 
-export function toWindSector(degrees): string {
+export function toSector(degrees): string {
   if (typeof degrees !== 'number' || isNaN(degrees)) {
     return 'Unkown';
   }
 
   const index = Math.round(degrees % 360 / 22.5);
 
-  let sectorName = kWindSectors[index];
+  let sectorName = kSectors[index];
   if (!sectorName) {
     sectorName = 'Variable';
   }
@@ -203,14 +191,3 @@ export function toWindSector(degrees): string {
 }
 
 //------------------------------------------------------------------------------
-
-export function toLux(wm2): number {
-
-  if (typeof wm2 !== 'number') {
-    wm2 = parseFloat(wm2);
-  }
-
-  return wm2 > 0
-    ? wm2 / 0.007892197
-    : 0;
-}

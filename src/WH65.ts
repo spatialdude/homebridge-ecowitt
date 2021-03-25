@@ -2,6 +2,12 @@ import { Service, PlatformAccessory /*ServiceEventTypes*/ } from 'homebridge';
 import { EcowittPlatform } from './EcowittPlatform';
 import { ThermoHygroSensor } from './ThermoHygroSensor';
 
+import * as Utils from './Utils.js';
+
+import { WindSensor } from './WindSensor';
+import { RainSensor } from './RainSensor';
+
+//------------------------------------------------------------------------------
 
 // https://en.wikipedia.org/wiki/Ultraviolet_index
 
@@ -13,15 +19,26 @@ const uvInfos = [
   { level: 11, risk: 'Extreme' },
 ];
 
+//------------------------------------------------------------------------------
+
 export class WH65 extends ThermoHygroSensor {
   protected solarRadiation!: Service;
   protected uvIndex!: Service;
   protected uvThreshold: number;
 
-  // protected windDir: Service;
-  // protected windSpeed: Service;
-  // protected windGust: Service;
-  // protected maxDailyGust: Service;
+  protected windDirection: WindSensor | undefined;
+  protected windSpeed: WindSensor | undefined;
+  protected windGust: WindSensor | undefined;
+  protected maxDailyGust: WindSensor | undefined;
+
+  protected rainRate: RainSensor | undefined;
+  protected eventRainRate: RainSensor | undefined;
+  protected hourlyRain: RainSensor | undefined;
+  protected dailyRain: RainSensor | undefined;
+  protected weeklyRain: RainSensor | undefined;
+  protected monthlyRain: RainSensor | undefined;
+  protected yearlyRain: RainSensor | undefined;
+  protected totalRain: RainSensor | undefined;
 
   constructor(
     protected readonly platform: EcowittPlatform,
@@ -30,7 +47,7 @@ export class WH65 extends ThermoHygroSensor {
     super(platform, accessory);
 
     this.setModel('WH65');
-    this.setProductData('Solar Powererd 7-in-1 Outdoor Sensor');
+    this.setProductData(`${platform.wxStationInfo.frequency}Hz Solar Powererd 7-in-1 Outdoor Sensor`);
 
     this.setName(this.temperatureSensor, 'Outdoor Temperature');
     this.setName(this.humiditySensor, 'Outdoor Humidity');
@@ -60,6 +77,25 @@ export class WH65 extends ThermoHygroSensor {
 
       this.platform.log.info('uvThreshold:', this.uvThreshold);
     }
+
+    // Wind
+
+    this.windDirection = new WindSensor(platform, accessory, 'Wind Dir');
+    this.windSpeed = new WindSensor(platform, accessory, 'Wind Speed');
+    this.windGust = new WindSensor(platform, accessory, 'Wind Gust');
+    this.maxDailyGust = new WindSensor(platform, accessory, 'Max Daily Gust');
+
+    // Rain
+
+    this.rainRate = new RainSensor(platform, accessory, 'Rain Rate');
+    this.eventRainRate = new RainSensor(platform, accessory, 'Event Rain Rate');
+    this.hourlyRain = new RainSensor(platform, accessory, 'Hourly Rain');
+    this.dailyRain = new RainSensor(platform, accessory, 'Daily Rain');
+    this.weeklyRain = new RainSensor(platform, accessory, 'Weekly Rain');
+    this.monthlyRain = new RainSensor(platform, accessory, 'Monthly Rain');
+    this.yearlyRain = new RainSensor(platform, accessory, 'Yearly Rain');
+    this.totalRain = new RainSensor(platform, accessory, 'Total Rain');
+
   }
 
   update(dataReport) {
@@ -69,10 +105,17 @@ export class WH65 extends ThermoHygroSensor {
     this.platform.log.info('  humidity:', dataReport.humidity);
     this.platform.log.info('  solarradiation:', dataReport.solarradiation);
     this.platform.log.info('  uv:', dataReport.uv);
-    this.platform.log.info('  winddir:', dataReport.winddir);
-    this.platform.log.info('  windspeedmph:', dataReport.windspeedmph);
-    this.platform.log.info('  windgustmph:', dataReport.windgustmph);
-    this.platform.log.info('  maxdailygust:', dataReport.maxdailygust);
+
+    const winddir = parseFloat(dataReport.winddir);
+    const windspeedmph = parseFloat(dataReport.windspeedmph);
+    const windgustmph = parseFloat(dataReport.windgustmph);
+    const maxdailygust = parseFloat(dataReport.maxdailygust);
+
+    this.platform.log.info('  winddir:', winddir);
+    this.platform.log.info('  windspeedmph:', windspeedmph);
+    this.platform.log.info('  windgustmph:', windgustmph);
+    this.platform.log.info('  maxdailygust:', maxdailygust);
+
     this.platform.log.info('  rainratein:', dataReport.rainratein);
     this.platform.log.info('  eventrainin:', dataReport.eventrainin);
     this.platform.log.info('  hourlyrainin:', dataReport.hourlyrainin);
@@ -98,7 +141,7 @@ export class WH65 extends ThermoHygroSensor {
       this.updateName(this.solarRadiation, `Solar Radiation: ${dataReport.solarradiation} W/m²`);
       this.solarRadiation.updateCharacteristic(
         this.platform.Characteristic.CurrentAmbientLightLevel,
-        Math.round(this.toLux(dataReport.solarradiation)));
+        Math.round(Utils.toLux(dataReport.solarradiation)));
       this.updateStatusLowBattery(this.solarRadiation, lowBattery);
     }
 
@@ -109,15 +152,25 @@ export class WH65 extends ThermoHygroSensor {
       this.updateName(this.uvIndex, `UV Index: ${this.toRisk(uv)} (${uv})`);
       this.updateOccupancyDetected(this.uvIndex, uv > this.uvThreshold);
     }
-  }
 
-  toLux(wm2): number {
-    wm2 = parseFloat(wm2);
-    return wm2 > 0
-      ? wm2 / 0.00788
-      : 0;
-  }
+    // Wind
 
+    this.windDirection?.updateDirection(winddir, windspeedmph, 1);
+    this.windSpeed?.updateSpeed(windspeedmph, 1);
+    this.windGust?.updateSpeed(windgustmph, 1);
+    this.maxDailyGust?.updateSpeed(maxdailygust, 1);
+
+    // Rain
+
+    this.rainRate?.updateRate(parseFloat(dataReport.rainratein));
+    this.eventRainRate?.updateRate(parseFloat(dataReport.eventrainin));
+    this.hourlyRain?.updateTotal(parseFloat(dataReport.hourlyrainin));
+    this.dailyRain?.updateTotal(parseFloat(dataReport.dailyrainin));
+    this.weeklyRain?.updateTotal(parseFloat(dataReport.weeklyrainin));
+    this.monthlyRain?.updateTotal(parseFloat(dataReport.monthlyrainin));
+    this.yearlyRain?.updateTotal(parseFloat(dataReport.yearlyrainin));
+    this.totalRain?.updateTotal(parseFloat(dataReport.totalrainin));
+  }
 
   toRisk(uvIndex) {
     let uvInfo = uvInfos[0];

@@ -83,6 +83,45 @@
           }
         }
       },
+      "hidden": {
+        "title": "Hidden",
+        "type": "boolean",
+        "default": false
+      },
+      "beaufortTreshold": {
+        "title": "Threshold",
+        "type": "integer",
+        "required": true,
+        "default": 0,
+        "oneOf": [
+          { "title": "Calm", "enum": [0] },
+          { "title": "Light Air", "enum": [1] },
+          { "title": "Light Breeze", "enum": [2] },
+          { "title": "Gentle Breeze", "enum": [3] },
+          { "title": "Moderate Breeze", "enum": [4] },
+          { "title": "Fresh Breeze", "enum": [5] },
+          { "title": "Strong Breeze", "enum": [6] },
+          { "title": "Near Gale", "enum": [7] },
+          { "title": "Gale", "enum": [8] },
+          { "title": "Strong Gale", "enum": [9] },
+          { "title": "Storm", "enum": [10] },
+          { "title": "Violent Storm", "enum": [11] },
+          { "title": "Hurricane", "enum": [12] }
+        ]
+      },
+      "speedUnits": {
+        "title": "Speed Units",
+        "type": "string",
+        "default": "mph",
+        "oneOf": [
+          { "title": "Miles per hour", "enum": ["mph"] },
+          { "title": "Knots", "enum": ["kts"] },
+          { "title": "Kilometers per hour", "enum": ["kmh"] },
+          { "title": "Meters per second", "enum": ["mps"] },
+          { "title": "Beaufort Scale", "enum": ["beaufort"] }
+        ],
+        "required": true
+      },
       "th": {
         "type": "object",
         "properties": {
@@ -301,6 +340,29 @@
                   "items": []
                 }
               ]
+            },
+            {
+              "key": "windDirection",
+              "type": "fieldset",
+              "expandable": true,
+              "expanded": true,
+              "title": "Wind Direction",
+              "items": [
+                "hidden",
+                "beaufortTreshold"
+              ]
+            },
+            {
+              "key": "windSpeed",
+              "type": "fieldset",
+              "expandable": true,
+              "expanded": true,
+              "title": "Wind Speed",
+              "items": [
+                "hidden",
+                "speedUnits",
+                "beaufortTreshold"
+              ]
             }
           ]
         }
@@ -408,7 +470,7 @@
       "type": "fieldset",
       "expandable": true,
       "expanded": false,
-      "title": "PM2.5 Air Quility Sensors",
+      "title": "PM2.5 Air Quality Sensors",
       "items": [
         "pm25.hidden",
         {
