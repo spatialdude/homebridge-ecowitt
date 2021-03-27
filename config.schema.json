@@ -121,21 +121,21 @@
                 }
               },
               "speedThreshold": {
-                "title": "Wind speed threshold (<a href=\"https://en.wikipedia.org/wiki/Beaufort_scale\" target=\"_blank\" rel=\"noopener noreferrer\">Beaufort scale</a>)",
+                "title": "Wind speed threshold (<a href=\"https://simple.wikipedia.org/wiki/Beaufort_scale\" target=\"_blank\" rel=\"noopener noreferrer\">Beaufort scale</a>)",
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 12,
                 "default": 1
               },
               "gustThreshold": {
-                "title": "Wind gusts threshold (<a href=\"https://en.wikipedia.org/wiki/Beaufort_scale\" target=\"_blank\" rel=\"noopener noreferrer\">Beaufort scale</a>)",
+                "title": "Wind gusts threshold (<a href=\"https://simple.wikipedia.org/wiki/Beaufort_scale\" target=\"_blank\" rel=\"noopener noreferrer\">Beaufort scale</a>)",
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 12,
                 "default": 3
               },
               "maxDailyGustThreshold": {
-                "title": "Max daily gust threshold (<a href=\"https://en.wikipedia.org/wiki/Beaufort_scale\" target=\"_blank\" rel=\"noopener noreferrer\">Beaufort scale</a>)",
+                "title": "Max daily gust threshold (<a href=\"https://simple.wikipedia.org/wiki/Beaufort_scale\" target=\"_blank\" rel=\"noopener noreferrer\">Beaufort scale</a>)",
                 "type": "integer",
                 "minimum": 0,
                 "maximum": 12,
