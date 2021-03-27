@@ -13,19 +13,22 @@
         "title": "MAC Address",
         "type": "string",
         "pattern": "^([A-Fa-f0-9]{2}:){5}[A-Fa-f0-9]{2}$",
-        "required": true
+        "required": true,
+        "description": "The MAC address of your console or gateway"
       },
       "port": {
         "title": "Port",
         "type": "integer",
         "required": true,
-        "default": "8080"
+        "default": "8080",
+        "description": "Port number on which to listen for data reports"
       },
       "path": {
         "title": "Path",
         "type": "string",
         "required": true,
-        "default": "/data/report"
+        "default": "/data/report",
+        "description": "Host path which will receive data reports"
       },
       "ws": {
         "type": "object",
@@ -65,7 +68,7 @@
             "type": "object",
             "properties": {
               "units": {
-                "title": "Speed Units",
+                "title": "Units",
                 "type": "string",
                 "default": "beaufort",
                 "oneOf": [
@@ -116,6 +119,27 @@
                     "MaxDailyGust"
                   ]
                 }
+              },
+              "speedThreshold": {
+                "title": "Wind speed threshold (<a href=\"https://en.wikipedia.org/wiki/Beaufort_scale\" target=\"_blank\" rel=\"noopener noreferrer\">Beaufort scale</a>)",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 12,
+                "default": 1
+              },
+              "gustThreshold": {
+                "title": "Wind gusts threshold (<a href=\"https://en.wikipedia.org/wiki/Beaufort_scale\" target=\"_blank\" rel=\"noopener noreferrer\">Beaufort scale</a>)",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 12,
+                "default": 3
+              },
+              "maxDailyGustThreshold": {
+                "title": "Max daily gust threshold (<a href=\"https://en.wikipedia.org/wiki/Beaufort_scale\" target=\"_blank\" rel=\"noopener noreferrer\">Beaufort scale</a>)",
+                "type": "integer",
+                "minimum": 0,
+                "maximum": 12,
+                "default": 8
               }
             }
           },
@@ -123,7 +147,7 @@
             "type": "object",
             "properties": {
               "units": {
-                "title": "Speed Units",
+                "title": "Units",
                 "type": "string",
                 "default": "mm",
                 "oneOf": [
@@ -407,7 +431,7 @@
         "name",
         "mac",
         {
-          "type": "fieldset",
+          "type": "section",
           "expandable": true,
           "expanded": false,
           "title": "Data Report Service",
@@ -439,7 +463,10 @@
               "title": "Wind",
               "items": [
                 "ws.wind.units",
-                "ws.wind.hide"
+                "ws.wind.hide",
+                "ws.wind.speedThreshold",
+                "ws.wind.gustThreshold",
+                "ws.wind.maxDailyGustThreshold"
               ]
             },
             {

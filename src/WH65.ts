@@ -193,10 +193,10 @@ export class WH65 extends ThermoHygroSensor {
 
     // Wind
 
-    this.windDirection?.updateDirection(winddir, windspeedmph);
-    this.windSpeed?.updateSpeed(windspeedmph);
-    this.windGust?.updateSpeed(windgustmph);
-    this.maxDailyGust?.updateSpeed(maxdailygust);
+    this.windDirection?.updateDirection(winddir);
+    this.windSpeed?.updateSpeed(windspeedmph, this.platform.config.ws.wind.speedThresold);
+    this.windGust?.updateSpeed(windgustmph, this.platform.config.ws.wind.gustThresold);
+    this.maxDailyGust?.updateSpeed(maxdailygust, this.platform.config.ws.wind.maxDailyGustThresold);
 
     // Rain
 

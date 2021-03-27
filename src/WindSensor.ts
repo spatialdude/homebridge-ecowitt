@@ -19,7 +19,7 @@ export class WindSensor extends MotionSensor {
 
   //----------------------------------------------------------------------------
 
-  public updateDirection(winddir: number, windspeedmph = Number.NaN) {
+  public updateDirection(winddir: number) {
 
     if (!isFinite(winddir)) {
       this.updateStatusActive(false);
@@ -29,7 +29,6 @@ export class WindSensor extends MotionSensor {
 
     this.updateStatusActive(true);
     this.updateName(`${this.name}: ${winddir}° ${WindUtil.toSector(winddir)}`);
-    this.updateMotionDetected(windspeedmph > 0);
   }
 
   //----------------------------------------------------------------------------
