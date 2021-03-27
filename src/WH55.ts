@@ -18,7 +18,7 @@ export class WH55 extends EcowittAccessory {
     this.setProductData('${platform.wxStationInfo.frequency}Hz Wireless Multi-channel Water Leak Detection Sensor');
     this.setSerialNumber(`CH${this.channel}`);
 
-    this.name = this.platform.config?.leak?.[`name${this.channel}`] || `🚰Detector CH${this.channel}`;
+    this.name = this.platform.config?.leak?.[`name${this.channel}`] || `CH${this.channel}`;
 
     this.leakSensor = this.accessory.getService(this.platform.Service.LeakSensor)
       || this.accessory.addService(this.platform.Service.LeakSensor);

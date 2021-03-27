@@ -2,11 +2,13 @@ import { Service, PlatformAccessory } from 'homebridge';
 import { EcowittPlatform } from './EcowittPlatform';
 import { EcowittAccessory } from './EcowittAccessory';
 
+import { ContactSensor } from './ContactSensor';
+import { OccupancySensor } from './OccupancySensor';
+
 export class WH57 extends EcowittAccessory {
   protected battery: Service;
-  protected lightningSensor: Service;
-  protected lightningDistance: Service;
-  protected lightningCount: Service;
+  protected events: ContactSensor;
+  protected timeDistance: OccupancySensor;
 
   constructor(
     protected readonly platform: EcowittPlatform,
@@ -17,19 +19,13 @@ export class WH57 extends EcowittAccessory {
     this.setModel('WH57');
     this.setProductData('${platform.wxStationInfo.frequency}Hz Lightning Detector Sensor');
 
-    this.lightningDistance = this.accessory.getService(this.platform.Service.OccupancySensor)
-      || this.accessory.addService(this.platform.Service.OccupancySensor);
-
-    this.lightningCount = this.accessory.getService(this.platform.Service.MotionSensor)
-      || this.accessory.addService(this.platform.Service.MotionSensor);
-
-    this.lightningSensor = this.accessory.getService(this.platform.Service.ContactSensor)
-      || this.accessory.addService(this.platform.Service.ContactSensor);
-
-    this.battery = this.addBattery('⚡Battery');
+    this.events = new ContactSensor(platform, accessory, 'Events');
+    this.timeDistance = new OccupancySensor(platform, accessory, 'Time/Distance');
+    this.battery = this.addBattery('⚡');
   }
 
   update(dataReport) {
+
     this.platform.log.info('WH57 Update');
     this.platform.log.info('  wh57batt:', dataReport.wh57batt);
     this.platform.log.info('  lightning:', dataReport.lightning);
@@ -44,20 +40,21 @@ export class WH57 extends EcowittAccessory {
     this.updateBatteryLevel(this.battery, batteryLevel * 100);
     this.updateStatusLowBattery(this.battery, lowBattery);
 
-    // Detection time
+    // Detection
+
+    const lightningNum = parseInt(dataReport.lightning_num);
+
+    // Strike count
+
+    this.events.updateState(lightningNum > 0);
+    this.events.updateStatusLowBattery(lowBattery);
+    this.events.updateName(`⚡ ${lightningNum}`);
+
+    // Time & Distance
 
     const lightningTime = parseInt(dataReport.lightning_time);
-    const lightningDetected = lightningTime > 0 && lightningTime < 300000; // < 5 min
 
-    this.lightningSensor.updateCharacteristic(
-      this.platform.Characteristic.ContactSensorState,
-      !lightningDetected
-        ? this.platform.Characteristic.ContactSensorState.CONTACT_DETECTED
-        : this.platform.Characteristic.ContactSensorState.CONTACT_NOT_DETECTED);
-
-    this.updateStatusLowBattery(this.lightningSensor, lowBattery);
-
-    let contactText = '⚡';
+    let timeText = '';
 
     if (lightningTime > 0) {
       const ms = lightningTime;
@@ -70,55 +67,35 @@ export class WH57 extends EcowittAccessory {
       h = h % 24;
 
       // eslint-disable-next-line no-inner-declarations
-      function append(t: string) {
-        if (contactText) {
-          contactText += ',';
+      function appendTime(text: string) {
+        if (timeText) {
+          timeText += ',';
         }
 
-        contactText += t;
+        timeText += text;
       }
 
       if (d > 1) {
-        append(d.toString() + ' days');
+        appendTime(`${d} days`);
       } else if (d || h || m) {
         if (d) {
-          append(d > 1 ? d.toString() + ' days' : '1 day');
+          appendTime(d > 1 ? `${d} days` : '1 day');
         }
         if (h) {
-          append(h > 1 ? h.toString() + ' hours' : '1 hour');
+          appendTime(h > 1 ? `${h} hours` : '1 hour');
         }
-        if (m && !d) {
-          append(m > 1 ? m.toString() + ' minutes' : '1 minute');
+        if (m) {
+          appendTime(m > 1 ? `${m} minutes` : '1 minute');
         }
       } else if (s) {
-        append(m > 1 ? m.toString() + ' seconds' : '1 second');
+        appendTime(s > 1 ? `${s} seconds` : '1 second');
       }
 
-      contactText += ' ago';
+      timeText += ' ago';
     }
 
-    this.updateName(this.lightningSensor, contactText);
-
-    // Distance to lightning
-
-    this.updateName(this.lightningDistance,
-      `⚡Distance: ${dataReport.lightning} km`);
-
-    this.lightningDistance.updateCharacteristic(
-      this.platform.Characteristic.OccupancyDetected,
-      lightningDetected);
-
-    this.updateStatusLowBattery(this.lightningDistance, lowBattery);
-
-    // Number of lightning strikes
-
-    this.lightningCount.updateCharacteristic(
-      this.platform.Characteristic.MotionDetected,
-      lightningDetected);
-
-    this.updateStatusLowBattery(this.lightningCount, lowBattery);
-
-    this.updateName(this.lightningCount,
-      `⚡Daily: ${dataReport.lightning_num}`);
+    this.timeDistance.updateName(lightningNum > 0 ? `⚡${dataReport.lightning} km ${timeText}` : '⚡ --');
+    this.timeDistance.updateOccupancyDetected(lightningNum > 0);
+    this.timeDistance.updateStatusLowBattery(lowBattery);
   }
 }

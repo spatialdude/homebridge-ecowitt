@@ -32,7 +32,7 @@ interface StationInfo {
   frequency: string;
   PASSKEY: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  sensors: any [];
+  sensors: any[];
 }
 
 /**
@@ -178,33 +178,41 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
     this.log.info('Discovering sensors');
 
     this.addSensorType(/GW1000/.test(dataReport.model), 'GW1000');
-    this.addSensorType(dataReport.wh25batt !== undefined, 'WH25');
-    this.addSensorType(dataReport.wh57batt !== undefined, 'WH57');
-    this.addSensorType(dataReport.wh65batt !== undefined, 'WH65');
 
-    if (!this.config?.th?.hidden) {
+    if (!this.config?.ws?.hide) {
+      this.addSensorType(dataReport.wh65batt !== undefined, 'WH65');
+    }
+
+    this.addSensorType(dataReport.wh25batt !== undefined, 'WH25');
+
+    if (!this.config?.th?.hide) {
       for (let channel = 1; channel <= 8; channel++) {
         this.addSensorType(dataReport[`batt${channel}`] !== undefined, 'WH31', channel);
       }
     }
 
-    if (!this.config?.pm25?.hidden) {
+    if (!this.config?.pm25?.hide) {
       for (let channel = 1; channel <= 4; channel++) {
         this.addSensorType(dataReport[`pm25batt${channel}`] !== undefined, 'WH41', channel);
       }
     }
 
-    if (!this.config?.soil?.hidden) {
+    if (!this.config?.soil?.hide) {
       for (let channel = 1; channel <= 8; channel++) {
         this.addSensorType(dataReport[`soilbatt${channel}`] !== undefined, 'WH51', channel);
       }
     }
 
-    if (!this.config?.leak?.hidden) {
+    if (!this.config?.leak?.hide) {
       for (let channel = 1; channel <= 4; channel++) {
         this.addSensorType(dataReport[`leakbatt${channel}`] !== undefined, 'WH55', channel);
       }
     }
+
+    if (!this.config?.lightning?.hide) {
+      this.addSensorType(dataReport.wh57batt !== undefined, 'WH57');
+    }
+
 
     this.log.info('WX Station:', JSON.stringify(this.wxStationInfo, undefined, 2));
 

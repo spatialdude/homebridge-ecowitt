@@ -1,14 +1,15 @@
 import { Service, PlatformAccessory } from 'homebridge';
 import { EcowittPlatform } from './EcowittPlatform';
 import { ThermoHygroSensor } from './ThermoHygroSensor';
+import { OccupancySensor } from './OccupancySensor';
 
 import * as Utils from './Utils.js';
 
 //------------------------------------------------------------------------------
 
 export class ThermoHygroBaroSensor extends ThermoHygroSensor {
-  protected absolutePressureSensor: Service;
-  protected relativePressureSensor: Service;
+  protected absolutePressureSensor: OccupancySensor;
+  protected relativePressureSensor: OccupancySensor;
 
   constructor(
     protected readonly platform: EcowittPlatform,
@@ -16,17 +17,15 @@ export class ThermoHygroBaroSensor extends ThermoHygroSensor {
   ) {
     super(platform, accessory);
 
-    this.absolutePressureSensor = this.addOccupancySensor('Absolute Pressure');
-    this.relativePressureSensor = this.addOccupancySensor('Relative Pressure');
+    this.absolutePressureSensor = new OccupancySensor(platform, accessory, 'Absolute Pressure');
+    this.relativePressureSensor = new OccupancySensor(platform, accessory, 'Relative Pressure');
   }
 
   updateRelativePressure(baromabs) {
-    this.updateName(this.absolutePressureSensor,
-      `Abs. Pressure: ${Math.round(Utils.tohPa(baromabs)).toString()} hPa`);
+    this.absolutePressureSensor.updateName(`Abs. Pressure: ${Math.round(Utils.tohPa(baromabs)).toString()} hPa`);
   }
 
   updateAbsolutePressure(baromrel) {
-    this.updateName(this.relativePressureSensor,
-      `Rel. Pressure: ${Math.round(Utils.tohPa(baromrel)).toString()} hPa`);
+    this.relativePressureSensor.updateName(`Rel. Pressure: ${Math.round(Utils.tohPa(baromrel)).toString()} hPa`);
   }
 }

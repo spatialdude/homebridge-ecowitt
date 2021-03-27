@@ -32,7 +32,7 @@ export class WH65 extends ThermoHygroSensor {
   protected maxDailyGust: WindSensor | undefined;
 
   protected rainRate: RainSensor | undefined;
-  protected eventRainRate: RainSensor | undefined;
+  protected eventRain: RainSensor | undefined;
   protected hourlyRain: RainSensor | undefined;
   protected dailyRain: RainSensor | undefined;
   protected weeklyRain: RainSensor | undefined;
@@ -52,12 +52,12 @@ export class WH65 extends ThermoHygroSensor {
     this.setName(this.temperatureSensor, 'Outdoor Temperature');
     this.setName(this.humiditySensor, 'Outdoor Humidity');
 
-    this.solarRadiation = this.accessory.getService(this.platform.Service.LightSensor)
-      || this.accessory.addService(this.platform.Service.LightSensor);
-
     // Solar Radiation
 
-    if (!this.platform.config.ws?.solarradiation?.hidden) {
+    if (!this.platform.config.ws?.solarradiation?.hide) {
+      this.solarRadiation = this.accessory.getService(this.platform.Service.LightSensor)
+      || this.accessory.addService(this.platform.Service.LightSensor);
+
       this.setName(this.solarRadiation, 'Solar Radiation');
 
       this.solarRadiation
@@ -72,7 +72,7 @@ export class WH65 extends ThermoHygroSensor {
 
     this.uvThreshold = this.platform.config?.ws?.uv?.threshold ?? 6;
 
-    if (!this.platform.config.ws?.uv?.hidden) {
+    if (!this.platform.config.ws?.uv?.hide) {
       this.uvIndex = this.addOccupancySensor('UV Index');
 
       this.platform.log.info('uvThreshold:', this.uvThreshold);
@@ -80,22 +80,59 @@ export class WH65 extends ThermoHygroSensor {
 
     // Wind
 
-    this.windDirection = new WindSensor(platform, accessory, 'Wind Dir');
-    this.windSpeed = new WindSensor(platform, accessory, 'Wind Speed');
-    this.windGust = new WindSensor(platform, accessory, 'Wind Gust');
-    this.maxDailyGust = new WindSensor(platform, accessory, 'Max Daily Gust');
+    const windHide = this.platform.config?.ws?.wind?.hide || [];
+
+    if (!windHide.includes('Direction')) {
+      this.windDirection = new WindSensor(platform, accessory, 'Wind Dir');
+    }
+
+    if (!windHide.includes('Speed')) {
+      this.windSpeed = new WindSensor(platform, accessory, 'Wind Speed');
+    }
+
+    if (!windHide.includes('Gust')) {
+      this.windGust = new WindSensor(platform, accessory, 'Wind Gust');
+    }
+
+    if (!windHide.includes('MaxDailyGust')) {
+      this.maxDailyGust = new WindSensor(platform, accessory, 'Max Daily Gust');
+    }
 
     // Rain
 
-    this.rainRate = new RainSensor(platform, accessory, 'Rain Rate');
-    this.eventRainRate = new RainSensor(platform, accessory, 'Event Rain Rate');
-    this.hourlyRain = new RainSensor(platform, accessory, 'Hourly Rain');
-    this.dailyRain = new RainSensor(platform, accessory, 'Daily Rain');
-    this.weeklyRain = new RainSensor(platform, accessory, 'Weekly Rain');
-    this.monthlyRain = new RainSensor(platform, accessory, 'Monthly Rain');
-    this.yearlyRain = new RainSensor(platform, accessory, 'Yearly Rain');
-    this.totalRain = new RainSensor(platform, accessory, 'Total Rain');
+    const rainHide = this.platform.config?.ws?.rain?.hide || [];
 
+    if (!rainHide.includes('Rate')) {
+      this.rainRate = new RainSensor(platform, accessory, 'Rain Rate');
+    }
+
+    if (!rainHide.includes('Event')) {
+      this.eventRain = new RainSensor(platform, accessory, 'Event Rain Rate');
+    }
+
+    if (!rainHide.includes('Hourly')) {
+      this.hourlyRain = new RainSensor(platform, accessory, 'Hourly Rain');
+    }
+
+    if (!rainHide.includes('Daily')) {
+      this.dailyRain = new RainSensor(platform, accessory, 'Daily Rain');
+    }
+
+    if (!rainHide.includes('Weekly')) {
+      this.weeklyRain = new RainSensor(platform, accessory, 'Weekly Rain');
+    }
+
+    if (!rainHide.includes('Monthly')) {
+      this.monthlyRain = new RainSensor(platform, accessory, 'Monthly Rain');
+    }
+
+    if (!rainHide.includes('Yearly')) {
+      this.yearlyRain = new RainSensor(platform, accessory, 'Yearly Rain');
+    }
+
+    if (!rainHide.includes('Total')) {
+      this.totalRain = new RainSensor(platform, accessory, 'Total Rain');
+    }
   }
 
   update(dataReport) {
@@ -110,6 +147,7 @@ export class WH65 extends ThermoHygroSensor {
     const windspeedmph = parseFloat(dataReport.windspeedmph);
     const windgustmph = parseFloat(dataReport.windgustmph);
     const maxdailygust = parseFloat(dataReport.maxdailygust);
+
 
     this.platform.log.info('  winddir:', winddir);
     this.platform.log.info('  windspeedmph:', windspeedmph);
@@ -155,15 +193,15 @@ export class WH65 extends ThermoHygroSensor {
 
     // Wind
 
-    this.windDirection?.updateDirection(winddir, windspeedmph, 1);
-    this.windSpeed?.updateSpeed(windspeedmph, 1);
-    this.windGust?.updateSpeed(windgustmph, 1);
-    this.maxDailyGust?.updateSpeed(maxdailygust, 1);
+    this.windDirection?.updateDirection(winddir, windspeedmph);
+    this.windSpeed?.updateSpeed(windspeedmph);
+    this.windGust?.updateSpeed(windgustmph);
+    this.maxDailyGust?.updateSpeed(maxdailygust);
 
     // Rain
 
     this.rainRate?.updateRate(parseFloat(dataReport.rainratein));
-    this.eventRainRate?.updateRate(parseFloat(dataReport.eventrainin));
+    this.eventRain?.updateTotal(parseFloat(dataReport.eventrainin));
     this.hourlyRain?.updateTotal(parseFloat(dataReport.hourlyrainin));
     this.dailyRain?.updateTotal(parseFloat(dataReport.dailyrainin));
     this.weeklyRain?.updateTotal(parseFloat(dataReport.weeklyrainin));

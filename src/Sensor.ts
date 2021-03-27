@@ -47,6 +47,16 @@ export class Sensor {
   }
 
   //---------------------------------------------------------------------------
+
+  updateStatusLowBattery(lowBattery: boolean) {
+    this.service.updateCharacteristic(
+      this.platform.Characteristic.StatusLowBattery,
+      lowBattery
+        ? this.platform.Characteristic.StatusLowBattery.BATTERY_LEVEL_LOW
+        : this.platform.Characteristic.StatusLowBattery.BATTERY_LEVEL_NORMAL);
+  }
+
+  //---------------------------------------------------------------------------
 }
 
 

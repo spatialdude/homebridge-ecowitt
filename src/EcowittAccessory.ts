@@ -131,7 +131,7 @@ export class EcowittAccessory {
 
     battery.setCharacteristic(
       this.platform.Characteristic.Name,
-      name || (this.accessory.context.sensorInfo.name + ' Battery'));
+      `${name} 🔋`);
 
     battery.setCharacteristic(
       this.platform.Characteristic.ChargingState,

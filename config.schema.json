@@ -30,16 +30,16 @@
       "ws": {
         "type": "object",
         "properties": {
-          "hidden": {
-            "title": "Hidden",
+          "hide": {
+            "title": "Hide",
             "type": "boolean",
             "default": false
           },
           "uv": {
             "type": "object",
             "properties": {
-              "hidden": {
-                "title": "Hidden",
+              "hide": {
+                "title": "Hide",
                 "type": "boolean",
                 "default": false
               },
@@ -54,8 +54,8 @@
           "solarradiation": {
             "type": "object",
             "properties": {
-              "hidden": {
-                "title": "Hidden",
+              "hide": {
+                "title": "Hide",
                 "type": "boolean",
                 "default": false
               }
@@ -64,29 +64,104 @@
           "wind": {
             "type": "object",
             "properties": {
-              "hidden": {
-                "title": "Hidden",
-                "type": "boolean",
-                "default": false
+              "units": {
+                "title": "Speed Units",
+                "type": "string",
+                "default": "beaufort",
+                "oneOf": [
+                  {
+                    "title": "Miles per hour",
+                    "enum": [
+                      "mph"
+                    ]
+                  },
+                  {
+                    "title": "Knots",
+                    "enum": [
+                      "kts"
+                    ]
+                  },
+                  {
+                    "title": "Kilometers per hour",
+                    "enum": [
+                      "kmh"
+                    ]
+                  },
+                  {
+                    "title": "Meters per second",
+                    "enum": [
+                      "mps"
+                    ]
+                  },
+                  {
+                    "title": "Beaufort Scale",
+                    "enum": [
+                      "beaufort"
+                    ]
+                  }
+                ],
+                "required": true
+              },
+              "hide": {
+                "title": "Hide",
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "title": "Indicator",
+                  "type": "string",
+                  "enum": [
+                    "Direction",
+                    "Speed",
+                    "Gust",
+                    "MaxDailyGust"
+                  ]
+                }
               }
             }
           },
           "rain": {
             "type": "object",
             "properties": {
-              "hidden": {
-                "title": "Hidden",
-                "type": "boolean",
-                "default": false
+              "units": {
+                "title": "Speed Units",
+                "type": "string",
+                "default": "mm",
+                "oneOf": [
+                  {
+                    "title": "Millimeters",
+                    "enum": [
+                      "mm"
+                    ]
+                  },
+                  {
+                    "title": "Inches",
+                    "enum": [
+                      "in"
+                    ]
+                  }
+                ],
+                "required": true
+              },
+              "hide": {
+                "title": "Hide",
+                "type": "array",
+                "uniqueItems": true,
+                "items": {
+                  "title": "Indicator",
+                  "type": "string",
+                  "enum": [
+                    "Rate",
+                    "Event",
+                    "Daily",
+                    "Weekly",
+                    "Monthly",
+                    "Total"
+                  ]
+                }
               }
             }
           }
         }
-      },
-      "hidden": {
-        "title": "Hidden",
-        "type": "boolean",
-        "default": false
       },
       "beaufortTreshold": {
         "title": "Threshold",
@@ -94,39 +169,91 @@
         "required": true,
         "default": 0,
         "oneOf": [
-          { "title": "Calm", "enum": [0] },
-          { "title": "Light Air", "enum": [1] },
-          { "title": "Light Breeze", "enum": [2] },
-          { "title": "Gentle Breeze", "enum": [3] },
-          { "title": "Moderate Breeze", "enum": [4] },
-          { "title": "Fresh Breeze", "enum": [5] },
-          { "title": "Strong Breeze", "enum": [6] },
-          { "title": "Near Gale", "enum": [7] },
-          { "title": "Gale", "enum": [8] },
-          { "title": "Strong Gale", "enum": [9] },
-          { "title": "Storm", "enum": [10] },
-          { "title": "Violent Storm", "enum": [11] },
-          { "title": "Hurricane", "enum": [12] }
+          {
+            "title": "Calm",
+            "enum": [
+              0
+            ]
+          },
+          {
+            "title": "Light Air",
+            "enum": [
+              1
+            ]
+          },
+          {
+            "title": "Light Breeze",
+            "enum": [
+              2
+            ]
+          },
+          {
+            "title": "Gentle Breeze",
+            "enum": [
+              3
+            ]
+          },
+          {
+            "title": "Moderate Breeze",
+            "enum": [
+              4
+            ]
+          },
+          {
+            "title": "Fresh Breeze",
+            "enum": [
+              5
+            ]
+          },
+          {
+            "title": "Strong Breeze",
+            "enum": [
+              6
+            ]
+          },
+          {
+            "title": "Near Gale",
+            "enum": [
+              7
+            ]
+          },
+          {
+            "title": "Gale",
+            "enum": [
+              8
+            ]
+          },
+          {
+            "title": "Strong Gale",
+            "enum": [
+              9
+            ]
+          },
+          {
+            "title": "Storm",
+            "enum": [
+              10
+            ]
+          },
+          {
+            "title": "Violent Storm",
+            "enum": [
+              11
+            ]
+          },
+          {
+            "title": "Hurricane",
+            "enum": [
+              12
+            ]
+          }
         ]
-      },
-      "speedUnits": {
-        "title": "Speed Units",
-        "type": "string",
-        "default": "mph",
-        "oneOf": [
-          { "title": "Miles per hour", "enum": ["mph"] },
-          { "title": "Knots", "enum": ["kts"] },
-          { "title": "Kilometers per hour", "enum": ["kmh"] },
-          { "title": "Meters per second", "enum": ["mps"] },
-          { "title": "Beaufort Scale", "enum": ["beaufort"] }
-        ],
-        "required": true
       },
       "th": {
         "type": "object",
         "properties": {
-          "hidden": {
-            "title": "Hidden",
+          "hide": {
+            "title": "Hide",
             "type": "boolean",
             "default": false
           },
@@ -167,8 +294,8 @@
       "soil": {
         "type": "object",
         "properties": {
-          "hidden": {
-            "title": "Hidden",
+          "hide": {
+            "title": "Hide",
             "type": "boolean",
             "default": false
           },
@@ -209,8 +336,8 @@
       "leak": {
         "type": "object",
         "properties": {
-          "hidden": {
-            "title": "Hidden",
+          "hide": {
+            "title": "Hide",
             "type": "boolean",
             "default": false
           },
@@ -235,8 +362,8 @@
       "pm25": {
         "type": "object",
         "properties": {
-          "hidden": {
-            "title": "Hidden",
+          "hide": {
+            "title": "Hide",
             "type": "boolean",
             "default": false
           },
@@ -261,8 +388,8 @@
       "lightning": {
         "type": "object",
         "properties": {
-          "hidden": {
-            "title": "Hidden",
+          "hide": {
+            "title": "Hide",
             "type": "boolean",
             "default": false
           }
@@ -295,28 +422,48 @@
       "type": "fieldset",
       "expandable": true,
       "expanded": false,
-      "title": "Weather Sensors",
+      "title": "Outdoor Weather Sensors",
       "items": [
-        "ws.hidden",
+        "ws.hide",
         {
           "type": "fieldset",
           "notitle": true,
           "condition": {
-            "functionBody": "return !model.ws.hidden;"
+            "functionBody": "return !model.ws.hide;"
           },
           "items": [
             {
-              "type": "fieldset",
+              "type": "section",
               "expandable": true,
               "expanded": false,
-              "title": "UV Index",
+              "title": "Wind",
               "items": [
-                "ws.uv.hidden",
+                "ws.wind.units",
+                "ws.wind.hide"
+              ]
+            },
+            {
+              "type": "section",
+              "expandable": true,
+              "expanded": false,
+              "title": "Rain",
+              "items": [
+                "ws.rain.units",
+                "ws.rain.hide"
+              ]
+            },
+            {
+              "type": "section",
+              "expandable": true,
+              "expanded": false,
+              "title": "UV",
+              "items": [
+                "ws.uv.hide",
                 {
                   "type": "fieldset",
                   "notitle": true,
                   "condition": {
-                    "functionBody": "return !model.ws.uv.hidden;"
+                    "functionBody": "return !model.ws.uv.hide;"
                   },
                   "items": [
                     "ws.uv.threshold"
@@ -325,43 +472,20 @@
               ]
             },
             {
-              "type": "fieldset",
+              "type": "section",
               "expandable": true,
               "expanded": false,
               "title": "Solar Radiation",
               "items": [
-                "ws.solarradiation.hidden",
+                "ws.solarradiation.hide",
                 {
                   "type": "fieldset",
                   "notitle": true,
                   "condition": {
-                    "functionBody": "return !model.ws.solarradiation.hidden;"
+                    "functionBody": "return !model.ws.solarradiation.hide;"
                   },
                   "items": []
                 }
-              ]
-            },
-            {
-              "key": "windDirection",
-              "type": "fieldset",
-              "expandable": true,
-              "expanded": true,
-              "title": "Wind Direction",
-              "items": [
-                "hidden",
-                "beaufortTreshold"
-              ]
-            },
-            {
-              "key": "windSpeed",
-              "type": "fieldset",
-              "expandable": true,
-              "expanded": true,
-              "title": "Wind Speed",
-              "items": [
-                "hidden",
-                "speedUnits",
-                "beaufortTreshold"
               ]
             }
           ]
@@ -381,12 +505,12 @@
       "expanded": false,
       "title": "Multi-Channel Thermometer/Hygrometer Sensors",
       "items": [
-        "th.hidden",
+        "th.hide",
         {
           "type": "fieldset",
           "notitle": true,
           "condition": {
-            "functionBody": "return !model.th.hidden;"
+            "functionBody": "return !model.th.hide;"
           },
           "items": [
             "th.name1",
@@ -407,12 +531,12 @@
       "expanded": false,
       "title": "Lightning Detection Sensor",
       "items": [
-        "lightning.hidden",
+        "lightning.hide",
         {
           "type": "fieldset",
           "notitle": true,
           "condition": {
-            "functionBody": "return !model.lightning.hidden;"
+            "functionBody": "return !model.lightning.hide;"
           },
           "items": []
         }
@@ -424,12 +548,12 @@
       "expanded": false,
       "title": "Soil Moisture Sensors",
       "items": [
-        "soil.hidden",
+        "soil.hide",
         {
           "type": "fieldset",
           "notitle": true,
           "condition": {
-            "functionBody": "return !model.soil.hidden;"
+            "functionBody": "return !model.soil.hide;"
           },
           "items": [
             "soil.name1",
@@ -450,12 +574,12 @@
       "expanded": false,
       "title": "Leak Detection Sensors",
       "items": [
-        "leak.hidden",
+        "leak.hide",
         {
-          "type": "fieldset",
+          "type": "section",
           "notitle": true,
           "condition": {
-            "functionBody": "return !model.leak.hidden;"
+            "functionBody": "return !model.leak.hide;"
           },
           "items": [
             "leak.name1",
@@ -472,12 +596,12 @@
       "expanded": false,
       "title": "PM2.5 Air Quality Sensors",
       "items": [
-        "pm25.hidden",
+        "pm25.hide",
         {
           "type": "fieldset",
           "notitle": true,
           "condition": {
-            "functionBody": "return !model.pm25.hidden;"
+            "functionBody": "return !model.pm25.hide;"
           },
           "items": [
             "pm25.name1",

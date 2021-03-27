@@ -19,30 +19,58 @@ export class WindSensor extends MotionSensor {
 
   //----------------------------------------------------------------------------
 
-  public updateDirection(winddir: number, windspeedmph = Number.NaN, forceThreshold = -1) {
+  public updateDirection(winddir: number, windspeedmph = Number.NaN) {
 
-    if (isFinite(windspeedmph)) {
-      const beaufort = WindUtil.toBeafort(windspeedmph);
-
-      this.updateName(`${this.name}: ${winddir}° ${WindUtil.toSector(winddir)}`);
-      this.updateMotionDetected(beaufort.force >= forceThreshold);
-    } else {
-      this.updateName(`${this.name}: ${winddir}° ${WindUtil.toSector(winddir)}`);
+    if (!isFinite(winddir)) {
+      this.updateStatusActive(false);
+      this.updateName('N/A');
+      return;
     }
+
+    this.updateStatusActive(true);
+    this.updateName(`${this.name}: ${winddir}° ${WindUtil.toSector(winddir)}`);
+    this.updateMotionDetected(windspeedmph > 0);
   }
 
   //----------------------------------------------------------------------------
 
-  public updateSpeed(windspeedmph: number, forceThreshold = -1) {
+  public updateSpeed(windspeedmph: number, forceThreshold = 1) {
 
     if (!isFinite(windspeedmph)) {
-      this.updateName('');
+      this.updateStatusActive(false);
+      this.updateName('N/A');
       return;
     }
 
     const beaufort = WindUtil.toBeafort(windspeedmph);
 
-    this.updateName(`${this.name}: ${beaufort.description}`);
+    let speed: string;
+
+    switch (this.platform.config?.ws?.wind?.units) {
+      case 'kts':
+        speed = `${Math.round(windspeedmph * 86.897624) / 100} Kts`;
+        break;
+
+      case 'mph':
+        speed = `${windspeedmph} Mph`;
+        break;
+
+      case 'kmh':
+        speed = `${Math.round(windspeedmph * 16.09344) / 10} Km/h`;
+        break;
+
+      case 'mps':
+        speed = `${Math.round(windspeedmph * 44.704) / 100} m/s`;
+        break;
+
+      case 'beaufort':
+      default:
+        speed = beaufort.description;
+        break;
+    }
+
+    this.updateStatusActive(true);
+    this.updateName(`${this.name}: ${speed}`);
     this.updateMotionDetected(beaufort.force >= forceThreshold);
   }
 
