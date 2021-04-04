@@ -1,7 +1,7 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
-import { EcowittAccessory } from './EcowittAccessory';
+//import { EcowittAccessory } from './EcowittAccessory';
 import { GW1000 } from './GW1000';
 import { WH25 } from './WH25';
 import { WH31 } from './WH31';
@@ -13,7 +13,7 @@ import { WH51 } from './WH51';
 
 import * as restify from 'restify';
 import * as crypto from 'crypto';
-import { platform } from 'node:os';
+//import { platform } from 'node:os';
 //import { timeStamp } from 'node:console';
 //import { type } from 'node:os';
 
@@ -23,8 +23,10 @@ import { platform } from 'node:os';
 //   displayName: string;
 // }
 
-interface StationInfo {
+interface BaseStationInfo {
+  name: string;
   model: string;
+  productData: string;
   serialNumber: string;
   hardwareRevision: string;
   softwareRevision: string;
@@ -47,11 +49,13 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
   // this is used to track restored cached accessories
   public readonly accessories: PlatformAccessory[] = [];
 
-  public wxDataReportServer: restify.Server;
+  public dataReportServer: restify.Server;
   public wxDataReport = null;
 
-  public wxStationInfo: StationInfo = {
+  public baseStationInfo: BaseStationInfo = {
+    name: '',
     model: '',
+    productData: '',
     serialNumber: this.config.mac,
     hardwareRevision: '',
     softwareRevision: '',
@@ -70,20 +74,21 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
     public readonly api: API,
   ) {
 
+    this.log.info('Storage path:', this.api.user.storagePath);
     this.log.info('config:', JSON.stringify(this.config, undefined, 2));
 
-    this.wxDataReportServer = restify.createServer();
-    this.wxDataReportServer.use(restify.plugins.bodyParser());
+    this.dataReportServer = restify.createServer();
+    this.dataReportServer.use(restify.plugins.bodyParser());
 
     this.log.info('Data report path:', this.config.path);
     this.log.info('Data report port:', this.config.port);
 
-    this.wxDataReportServer.post(
+    this.dataReportServer.post(
       this.config.path,
       (req, res, next) => {
         this.log.info('Data source address:', req.socket.remoteAddress);
         this.log.info('Request:', req.toString());
-        this.wxDataReportReport(req.body);
+        this.onDataReport(req.body);
         next();
       });
 
@@ -97,10 +102,10 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
     this.api.on('didFinishLaunching', () => {
       log.debug('Executed didFinishLaunching callback');
 
-      this.wxUnregisterAccessories();
+      this.unregisterAccessories();
 
-      this.wxDataReportServer.listen(this.config.port, () => {
-        this.log.info('Listening at %s', this.wxDataReportServer.url);
+      this.dataReportServer.listen(this.config.port, () => {
+        this.log.info('Listening for data reports on: %s', this.dataReportServer.url);
       });
     });
   }
@@ -125,9 +130,10 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
     this.accessories.push(accessory);
   }
 
+  //----------------------------------------------------------------------------
 
-  wxDataReportReport(dataReport) {
-    if (dataReport.PASSKEY !== this.wxStationInfo.PASSKEY) {
+  onDataReport(dataReport) {
+    if (dataReport.PASSKEY !== this.baseStationInfo.PASSKEY) {
       this.log.error('Report not for this station:', JSON.stringify(dataReport, undefined, 2));
       return;
     }
@@ -136,48 +142,74 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
 
     if (!this.wxDataReport) {
       this.wxDataReport = dataReport;
-      this.wxRegisterAccessories(dataReport);
+      this.registerAccessories(dataReport);
     } else {
       this.wxDataReport = dataReport;
     }
 
-    this.wxUpdateAccessories(dataReport);
+    this.updateAccessories(dataReport);
   }
+
+  //----------------------------------------------------------------------------
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   addSensorType(add: boolean, type: string, channel: any = undefined) {
     if (add) {
-      this.wxStationInfo.sensors.push(
+      this.baseStationInfo.sensors.push(
         {
           type: type,
           channel: channel,
         });
 
       if (channel) {
-        this.log.info(`Discovered sensor: ${type} channel: ${channel}`);
+        this.log.info(`Adding sensor: ${type} channel: ${channel}`);
       } else {
-        this.log.info(`Discovered sensor: ${type}`);
+        this.log.info(`Adding sensor: ${type}`);
       }
     }
   }
 
-  wxUnregisterAccessories() {
+  //----------------------------------------------------------------------------
+
+  unregisterAccessories() {
     this.log.info('Unregistering cached accessories:', this.accessories.length);
     this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, this.accessories);
   }
 
-  wxRegisterAccessories(dataReport) {
-    this.wxStationInfo.model = dataReport.model;
-    this.wxStationInfo.hardwareRevision = dataReport.stationtype;
-    this.wxStationInfo.frequency = dataReport.freq;
+  //----------------------------------------------------------------------------
 
-    const version = this.wxStationInfo.hardwareRevision.match(/GW1000_(.*)/);
-    this.wxStationInfo.firmwareRevision = Array.isArray(version) ? version[1] : '';
+  registerAccessories(dataReport) {
+    const stationTypeInfo = dataReport?.stationtype.match(/(EasyWeather|GW1000)_?(.*)/);
+    const modelInfo = dataReport?.model.match(/(HP2551CA|GW1000)_(.*)/);
 
+    this.log.info('stationTypeInfo:', JSON.stringify(stationTypeInfo));
+    this.log.info('modelInfo:', JSON.stringify(modelInfo));
+
+    this.baseStationInfo.frequency = dataReport.freq;
+
+    if (Array.isArray(modelInfo)) {
+      switch (modelInfo[1]) {
+        case 'GW1000':
+          this.baseStationInfo.name = this.config.name || 'Gateway';
+          // eslint-disable-next-line max-len
+          this.baseStationInfo.productData = `${this.baseStationInfo.frequency}Hz WiFi Weather Station Gateway with Indoor Temperature, Humidity and Barometric Sensor`;
+          this.baseStationInfo.model = dataReport.model;
+          this.baseStationInfo.hardwareRevision = dataReport.stationtype;
+          this.baseStationInfo.firmwareRevision = stationTypeInfo[2];
+          this.addSensorType(true, 'GW1000');
+          break;
+
+        case 'HP2551CA':
+          this.baseStationInfo.name = this.config.name || 'Display Console';
+          this.baseStationInfo.model = modelInfo[1];
+          this.baseStationInfo.productData = `${this.baseStationInfo.frequency}Hz Weather Station Display Console`;
+          this.baseStationInfo.softwareRevision = dataReport.stationtype;
+          this.baseStationInfo.firmwareRevision = modelInfo[2];
+          break;
+      }
+    }
 
     this.log.info('Discovering sensors');
-
-    this.addSensorType(/GW1000/.test(dataReport.model), 'GW1000');
 
     if (!this.config?.ws?.hide) {
       this.addSensorType(dataReport.wh65batt !== undefined, 'WH65');
@@ -213,10 +245,9 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
       this.addSensorType(dataReport.wh57batt !== undefined, 'WH57');
     }
 
+    this.log.info('StationInfo:', JSON.stringify(this.baseStationInfo, undefined, 2));
 
-    this.log.info('WX Station:', JSON.stringify(this.wxStationInfo, undefined, 2));
-
-    for (const sensor of this.wxStationInfo.sensors) {
+    for (const sensor of this.baseStationInfo.sensors) {
       const sensorId = this.config.mac +
         '-' +
         sensor.type +
@@ -300,12 +331,14 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
     }
   }
 
-  wxUpdateAccessories(dataReport) {
+  //----------------------------------------------------------------------------
+
+  updateAccessories(dataReport) {
     const dateUTC = new Date(dataReport.dateutc);
     this.log.info('Report time:', dateUTC);
 
-    for (const sensor of this.wxStationInfo.sensors) {
-      this.log.info('Updating:', sensor.type, sensor.channel);
+    for (const sensor of this.baseStationInfo.sensors) {
+      this.log.info('Updating:', sensor.type, 'channel:', sensor.channel);
       sensor.accessory.update(dataReport);
     }
   }

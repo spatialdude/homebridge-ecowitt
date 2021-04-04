@@ -14,7 +14,7 @@ export class WH31 extends ThermoHygroSensor {
     super(platform, accessory);
 
     this.setModel('WH31');
-    this.setProductData(`${platform.wxStationInfo.frequency}Hz Wireless Multi-channel Thermometer and Hygrometer Sensor`);
+    this.setProductData(`${platform.baseStationInfo.frequency}Hz Wireless Multi-channel Thermometer and Hygrometer Sensor`);
     this.setSerialNumber(`CH${this.channel}`);
 
     this.name = this.platform.config?.th?.[`name${this.channel}`] || `T&H CH${this.channel}`;

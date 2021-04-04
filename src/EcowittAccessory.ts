@@ -13,7 +13,11 @@ export class EcowittAccessory {
   ) {
 
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Ecowitt');
+      .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Ecowitt')
+      .setCharacteristic(this.platform.Characteristic.SerialNumber, platform.baseStationInfo.serialNumber)
+      .setCharacteristic(this.platform.Characteristic.HardwareRevision, platform.baseStationInfo.hardwareRevision)
+      .setCharacteristic(this.platform.Characteristic.SoftwareRevision, platform.baseStationInfo.softwareRevision)
+      .setCharacteristic(this.platform.Characteristic.FirmwareRevision, platform.baseStationInfo.firmwareRevision);
   }
 
   //----------------------------------------------------------------------------

@@ -47,7 +47,7 @@ export class WH65 extends ThermoHygroSensor {
     super(platform, accessory);
 
     this.setModel('WH65');
-    this.setProductData(`${platform.wxStationInfo.frequency}Hz Solar Powererd 7-in-1 Outdoor Sensor`);
+    this.setProductData(`${platform.baseStationInfo.frequency}Hz Solar Powererd 7-in-1 Outdoor Sensor`);
 
     this.setName(this.temperatureSensor, 'Outdoor Temperature');
     this.setName(this.humiditySensor, 'Outdoor Humidity');

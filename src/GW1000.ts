@@ -11,17 +11,16 @@ export class GW1000 extends ThermoHygroBaroSensor {
   ) {
     super(platform, accessory);
 
-    this.setModel(platform.wxStationInfo.model);
-    // eslint-disable-next-line max-len
-    this.setProductData(`${platform.wxStationInfo.frequency}Hz WiFi Weather Station Gateway with Indoor Temperature, Humidity and Barometric Sensor`);
+    this.setModel(platform.baseStationInfo.model);
+    this.setProductData(this.platform.baseStationInfo.productData);
 
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.Name, 'Gateway')
-      // .setCharacteristic(this.platform.Characteristic.ConfiguredName, accessory.context.sensorInfo.displayName)
-      .setCharacteristic(this.platform.Characteristic.SerialNumber, platform.wxStationInfo.serialNumber)
-      .setCharacteristic(this.platform.Characteristic.HardwareRevision, platform.wxStationInfo.hardwareRevision)
-      .setCharacteristic(this.platform.Characteristic.SoftwareRevision, platform.wxStationInfo.softwareRevision)
-      .setCharacteristic(this.platform.Characteristic.FirmwareRevision, platform.wxStationInfo.firmwareRevision);
+      .setCharacteristic(this.platform.Characteristic.Name, this.platform.baseStationInfo.name);
+    // .setCharacteristic(this.platform.Characteristic.ConfiguredName, accessory.context.sensorInfo.displayName)
+    //  .setCharacteristic(this.platform.Characteristic.SerialNumber, platform.baseStationInfo.serialNumber);
+    // .setCharacteristic(this.platform.Characteristic.HardwareRevision, platform.baseStationInfo.hardwareRevision)
+    // .setCharacteristic(this.platform.Characteristic.SoftwareRevision, platform.baseStationInfo.softwareRevision)
+    // .setCharacteristic(this.platform.Characteristic.FirmwareRevision, platform.baseStationInfo.firmwareRevision);
   }
 
   update(dataReport) {

@@ -1,4 +1,4 @@
-import { Service, PlatformAccessory } from 'homebridge';
+import { /*Service,*/ PlatformAccessory } from 'homebridge';
 import { EcowittPlatform } from './EcowittPlatform';
 import { ThermoHygroSensor } from './ThermoHygroSensor';
 import { OccupancySensor } from './OccupancySensor';
