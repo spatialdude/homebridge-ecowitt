@@ -74,7 +74,7 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
     public readonly api: API,
   ) {
 
-    this.log.info('Storage path:', this.api.user.storagePath);
+    this.log.info('Storage path:', this.api.user.storagePath());
     this.log.info('config:', JSON.stringify(this.config, undefined, 2));
 
     this.dataReportServer = restify.createServer();
