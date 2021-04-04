@@ -24,7 +24,7 @@ export class RainSensor extends Sensor {
 
   public updateRate(ratein: number) {
     if (!isFinite(ratein)) {
-      this.updateActive(false);
+      //this.updateActive(false);
       this.updateName('N/A');
       return;
     }
@@ -42,8 +42,8 @@ export class RainSensor extends Sensor {
         break;
     }
 
-    this.updateActive(true);
-    this.updateName(`${this.name}: ${rate}`);
+    //this.updateActive(true);
+    this.updateName(`${this.name}: ${rate} ${this.toIntensity(ratein)}`);
     this.updateDetected(ratein > 0);
   }
 
@@ -51,7 +51,7 @@ export class RainSensor extends Sensor {
 
   public updateTotal(totalin: number) {
     if (!isFinite(totalin)) {
-      this.updateActive(false);
+      //this.updateActive(false);
       this.updateName('N/A');
       return;
     }
@@ -69,7 +69,7 @@ export class RainSensor extends Sensor {
         break;
     }
 
-    this.updateActive(true);
+    //this.updateActive(true);
     this.updateName(`${this.name}: ${total}`);
     this.updateDetected(totalin > 0);
   }
@@ -90,6 +90,22 @@ export class RainSensor extends Sensor {
       detected
         ? this.platform.Characteristic.LeakDetected.LEAK_DETECTED
         : this.platform.Characteristic.LeakDetected.LEAK_NOT_DETECTED);
+  }
+
+  //----------------------------------------------------------------------------
+
+  private toIntensity(ratein: number): string {
+    if (ratein <= 0) {
+      return '';
+    } else if (ratein <= 0.098) {
+      return 'Light';
+    } else if (ratein <= 0.3) {
+      return 'Moderate';
+    } else if (ratein < 2) {
+      return 'Heavy';
+    } else {
+      return 'Violent';
+    }
   }
 
   //----------------------------------------------------------------------------

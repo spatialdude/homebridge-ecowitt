@@ -17,7 +17,7 @@ export class WH57 extends EcowittAccessory {
     super(platform, accessory);
 
     this.setModel('WH57');
-    this.setProductData('${platform.wxStationInfo.frequency}Hz Lightning Detector Sensor');
+    this.setProductData(`${platform.wxStationInfo.frequency}Hz Lightning Detector Sensor`);
 
     this.events = new ContactSensor(platform, accessory, 'Events');
     this.timeDistance = new OccupancySensor(platform, accessory, 'Time/Distance');

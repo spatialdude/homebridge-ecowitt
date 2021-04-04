@@ -15,7 +15,7 @@ export class WH55 extends EcowittAccessory {
     super(platform, accessory);
 
     this.setModel('WH55');
-    this.setProductData('${platform.wxStationInfo.frequency}Hz Wireless Multi-channel Water Leak Detection Sensor');
+    this.setProductData(`${platform.wxStationInfo.frequency}Hz Wireless Multi-channel Water Leak Detection Sensor`);
     this.setSerialNumber(`CH${this.channel}`);
 
     this.name = this.platform.config?.leak?.[`name${this.channel}`] || `CH${this.channel}`;
@@ -24,7 +24,7 @@ export class WH55 extends EcowittAccessory {
       || this.accessory.addService(this.platform.Service.LeakSensor);
 
     this.setName(this.leakSensor, this.name);
-    this.setStatusActive(this.leakSensor, false);
+    //this.setStatusActive(this.leakSensor, false);
 
     this.battery = this.addBattery(this.name);
   }
@@ -37,7 +37,7 @@ export class WH55 extends EcowittAccessory {
     this.platform.log.info('  leakbatt:', leakbatt);
     this.platform.log.info('  leak:', leak);
 
-    this.setStatusActive(this.leakSensor, true);
+    //this.setStatusActive(this.leakSensor, true);
 
     // Battery
 

@@ -187,92 +187,6 @@
           }
         }
       },
-      "beaufortTreshold": {
-        "title": "Threshold",
-        "type": "integer",
-        "required": true,
-        "default": 0,
-        "oneOf": [
-          {
-            "title": "Calm",
-            "enum": [
-              0
-            ]
-          },
-          {
-            "title": "Light Air",
-            "enum": [
-              1
-            ]
-          },
-          {
-            "title": "Light Breeze",
-            "enum": [
-              2
-            ]
-          },
-          {
-            "title": "Gentle Breeze",
-            "enum": [
-              3
-            ]
-          },
-          {
-            "title": "Moderate Breeze",
-            "enum": [
-              4
-            ]
-          },
-          {
-            "title": "Fresh Breeze",
-            "enum": [
-              5
-            ]
-          },
-          {
-            "title": "Strong Breeze",
-            "enum": [
-              6
-            ]
-          },
-          {
-            "title": "Near Gale",
-            "enum": [
-              7
-            ]
-          },
-          {
-            "title": "Gale",
-            "enum": [
-              8
-            ]
-          },
-          {
-            "title": "Strong Gale",
-            "enum": [
-              9
-            ]
-          },
-          {
-            "title": "Storm",
-            "enum": [
-              10
-            ]
-          },
-          {
-            "title": "Violent Storm",
-            "enum": [
-              11
-            ]
-          },
-          {
-            "title": "Hurricane",
-            "enum": [
-              12
-            ]
-          }
-        ]
-      },
       "th": {
         "type": "object",
         "properties": {
@@ -476,7 +390,8 @@
               "title": "Rain",
               "items": [
                 "ws.rain.units",
-                "ws.rain.hide"
+                "ws.rain.hide",
+                "ws.rain.rateThreshold"
               ]
             },
             {

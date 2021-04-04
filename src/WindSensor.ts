@@ -33,7 +33,7 @@ export class WindSensor extends MotionSensor {
 
   //----------------------------------------------------------------------------
 
-  public updateSpeed(windspeedmph: number, forceThreshold = 1) {
+  public updateSpeed(windspeedmph: number, threshold: number) {
 
     if (!isFinite(windspeedmph)) {
       this.updateStatusActive(false);
@@ -70,7 +70,7 @@ export class WindSensor extends MotionSensor {
 
     this.updateStatusActive(true);
     this.updateName(`${this.name}: ${speed}`);
-    this.updateMotionDetected(beaufort.force >= forceThreshold);
+    this.updateMotionDetected(beaufort.force >= threshold);
   }
 
   //----------------------------------------------------------------------------
