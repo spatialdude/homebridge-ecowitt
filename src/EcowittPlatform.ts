@@ -44,7 +44,7 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
   public readonly accessories: PlatformAccessory[] = [];
 
   public dataReportServer: restify.Server;
-  public wxDataReport = null;
+  public lastDataReport = null;
 
   public baseStationInfo: BaseStationInfo = {
     model: '',
@@ -134,11 +134,11 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
 
     this.log.info('Data report:', JSON.stringify(dataReport, undefined, 2));
 
-    if (!this.wxDataReport) {
-      this.wxDataReport = dataReport;
+    if (!this.lastDataReport) {
+      this.lastDataReport = dataReport;
       this.registerAccessories(dataReport);
     } else {
-      this.wxDataReport = dataReport;
+      this.lastDataReport = dataReport;
     }
 
     this.updateAccessories(dataReport);
