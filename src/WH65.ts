@@ -130,9 +130,9 @@ export class WH65 extends ThermoHygroSensor {
       this.yearlyRain = new RainSensor(platform, accessory, 'Yearly Rain');
     }
 
-    if (!rainHide.includes('Total')) {
-      this.totalRain = new RainSensor(platform, accessory, 'Total Rain');
-    }
+    // if (!rainHide.includes('Total')) {
+    //   this.totalRain = new RainSensor(platform, accessory, 'Total Rain');
+    // }
   }
 
   update(dataReport) {

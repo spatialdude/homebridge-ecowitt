@@ -15,8 +15,8 @@ export class GW1000 extends ThermoHygroBaroSensor {
     this.setProductData(this.platform.baseStationInfo.productData);
 
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.Name, this.platform.baseStationInfo.name);
-    // .setCharacteristic(this.platform.Characteristic.ConfiguredName, accessory.context.sensorInfo.displayName)
+      .setCharacteristic(this.platform.Characteristic.Name, this.platform.baseStationInfo.name)
+      .setCharacteristic(this.platform.Characteristic.ConfiguredName, this.platform.baseStationInfo.deviceName);
     //  .setCharacteristic(this.platform.Characteristic.SerialNumber, platform.baseStationInfo.serialNumber);
     // .setCharacteristic(this.platform.Characteristic.HardwareRevision, platform.baseStationInfo.hardwareRevision)
     // .setCharacteristic(this.platform.Characteristic.SoftwareRevision, platform.baseStationInfo.softwareRevision)

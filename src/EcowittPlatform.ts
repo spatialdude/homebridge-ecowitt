@@ -26,6 +26,7 @@ import * as crypto from 'crypto';
 interface BaseStationInfo {
   name: string;
   model: string;
+  deviceName: string;
   productData: string;
   serialNumber: string;
   hardwareRevision: string;
@@ -55,6 +56,7 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
   public baseStationInfo: BaseStationInfo = {
     name: '',
     model: '',
+    deviceName: '',
     productData: '',
     serialNumber: this.config.mac,
     hardwareRevision: '',
@@ -186,6 +188,11 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
     this.log.info('modelInfo:', JSON.stringify(modelInfo));
 
     this.baseStationInfo.frequency = dataReport.freq;
+
+    if (Array.isArray(stationTypeInfo)) {
+      const octets = this.config.mac.split(':');
+      this.baseStationInfo.deviceName = `${stationTypeInfo[1]}-WIFI${octets[4]}${octets[5]}`;
+    }
 
     if (Array.isArray(modelInfo)) {
       switch (modelInfo[1]) {
