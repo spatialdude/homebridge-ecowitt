@@ -1,15 +1,15 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
-//import { EcowittAccessory } from './EcowittAccessory';
+
 import { GW1000 } from './GW1000';
 import { WH25 } from './WH25';
 import { WH31 } from './WH31';
 import { WH41 } from './WH41';
-import { WH65 } from './WH65';
+import { WH51 } from './WH51';
 import { WH55 } from './WH55';
 import { WH57 } from './WH57';
-import { WH51 } from './WH51';
+import { WH65 } from './WH65';
 
 import * as restify from 'restify';
 import * as crypto from 'crypto';
@@ -17,17 +17,9 @@ import * as crypto from 'crypto';
 //import { timeStamp } from 'node:console';
 //import { type } from 'node:os';
 
-// interface SensorInfo {
-//   name: string;
-//   model: string;
-//   displayName: string;
-// }
-
 interface BaseStationInfo {
-  name: string;
   model: string;
   deviceName: string;
-  productData: string;
   serialNumber: string;
   hardwareRevision: string;
   softwareRevision: string;
@@ -43,6 +35,7 @@ interface BaseStationInfo {
  * This class is the main constructor for your plugin, this is where you should
  * parse the user config and discover/register accessories with Homebridge.
  */
+
 export class EcowittPlatform implements DynamicPlatformPlugin {
   public readonly Service: typeof Service = this.api.hap.Service;
   public readonly Characteristic: typeof Characteristic = this.api.hap.Characteristic;
@@ -54,10 +47,8 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
   public wxDataReport = null;
 
   public baseStationInfo: BaseStationInfo = {
-    name: '',
     model: '',
     deviceName: '',
-    productData: '',
     serialNumber: this.config.mac,
     hardwareRevision: '',
     softwareRevision: '',
@@ -79,11 +70,12 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
     this.log.info('Storage path:', this.api.user.storagePath());
     this.log.info('config:', JSON.stringify(this.config, undefined, 2));
 
+    this.log.info('Creating data report service');
+    this.log.info('  Port:', this.config.port);
+    this.log.info('  Path:', this.config.path);
+
     this.dataReportServer = restify.createServer();
     this.dataReportServer.use(restify.plugins.bodyParser());
-
-    this.log.info('Data report path:', this.config.path);
-    this.log.info('Data report port:', this.config.port);
 
     this.dataReportServer.post(
       this.config.path,
@@ -94,15 +86,14 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
         next();
       });
 
-
     this.log.debug('Finished initializing platform:', this.config.name);
 
     // When this event is fired it means Homebridge has restored all cached accessories from disk.
     // Dynamic Platform plugins should only register new accessories after this event was fired,
     // in order to ensure they weren't added to homebridge already. This event can also be used
     // to start discovery of new accessories.
+
     this.api.on('didFinishLaunching', () => {
-      log.debug('Executed didFinishLaunching callback');
 
       this.unregisterAccessories();
 
@@ -125,6 +116,7 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
    * This function is invoked when homebridge restores cached accessories from disk at startup.
    * It should be used to setup event handlers for characteristics and update respective values.
    */
+
   configureAccessory(accessory: PlatformAccessory) {
     this.log.info('Loading accessory from cache:', accessory.displayName);
 
@@ -136,7 +128,7 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
 
   onDataReport(dataReport) {
     if (dataReport.PASSKEY !== this.baseStationInfo.PASSKEY) {
-      this.log.error('Report not for this station:', JSON.stringify(dataReport, undefined, 2));
+      this.log.error('Not configured for data reports from this base station:', JSON.stringify(dataReport, undefined, 2));
       return;
     }
 
@@ -197,9 +189,6 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
     if (Array.isArray(modelInfo)) {
       switch (modelInfo[1]) {
         case 'GW1000':
-          this.baseStationInfo.name = this.config.name || 'Gateway';
-          // eslint-disable-next-line max-len
-          this.baseStationInfo.productData = `${this.baseStationInfo.frequency}Hz WiFi Weather Station Gateway with Indoor Temperature, Humidity and Barometric Sensor`;
           this.baseStationInfo.model = dataReport.model;
           this.baseStationInfo.hardwareRevision = dataReport.stationtype;
           this.baseStationInfo.firmwareRevision = stationTypeInfo[2];
@@ -207,9 +196,7 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
           break;
 
         case 'HP2551CA':
-          this.baseStationInfo.name = this.config.name || 'Display Console';
-          this.baseStationInfo.model = modelInfo[1];
-          this.baseStationInfo.productData = `${this.baseStationInfo.frequency}Hz Weather Station Display Console`;
+          this.baseStationInfo.model = dataReport.model;
           this.baseStationInfo.softwareRevision = dataReport.stationtype;
           this.baseStationInfo.firmwareRevision = modelInfo[2];
           break;

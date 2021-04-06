@@ -15,13 +15,12 @@ export class WH41 extends EcowittAccessory {
   ) {
     super(platform, accessory);
 
-    this.setModel('WH41');
-    this.setProductData(`${platform.baseStationInfo.frequency}Hz Wireless PM2.5 Air Quality Sensor`);
+    this.setModel(
+      'WH41',
+      'Wireless PM2.5 Air Quality Sensor');
     this.setSerialNumber(`CH${this.channel}`);
 
     this.name = this.platform.config?.pm25?.[`name${this.channel}`] || `PM 2.5 CH${this.channel}`;
-
-    platform.log.warn('WH41 NAME:', this.name);
 
     this.airQualitySensor = this.accessory.getService(this.platform.Service.AirQualitySensor)
       || this.accessory.addService(this.platform.Service.AirQualitySensor);

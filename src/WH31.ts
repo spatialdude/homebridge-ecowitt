@@ -4,7 +4,6 @@ import { ThermoHygroSensor } from './ThermoHygroSensor';
 
 
 export class WH31 extends ThermoHygroSensor {
-  protected name: string;
 
   constructor(
     protected readonly platform: EcowittPlatform,
@@ -13,14 +12,15 @@ export class WH31 extends ThermoHygroSensor {
   ) {
     super(platform, accessory);
 
-    this.setModel('WH31');
-    this.setProductData(`${platform.baseStationInfo.frequency}Hz Wireless Multi-channel Thermometer and Hygrometer Sensor`);
+    this.setModel(
+      'WH31',
+      'Wireless Multi-channel Thermometer and Hygrometer Sensor');
     this.setSerialNumber(`CH${this.channel}`);
 
-    this.name = this.platform.config?.th?.[`name${this.channel}`] || `T&H CH${this.channel}`;
+    const name = this.platform.config?.th?.[`name${this.channel}`];
 
-    this.setName(this.temperatureSensor, this.name);
-    this.setName(this.humiditySensor, this.name);
+    this.setName(this.temperatureSensor, name || `Temperature CH${this.channel}`);
+    this.setName(this.humiditySensor, name || `Humidity CH${this.channel}`);
   }
 
   update(dataReport) {

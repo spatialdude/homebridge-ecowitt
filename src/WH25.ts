@@ -11,8 +11,9 @@ export class WH25 extends ThermoHygroBaroSensor {
   ) {
     super(platform, accessory);
 
-    this.setModel('WH25');
-    this.setProductData(`${platform.baseStationInfo.frequency}Hz Indoor Temperature, Humidity and Barometric Sensor`);
+    this.setModel(
+      'WH25',
+      'Indoor Temperature, Humidity and Barometric Sensor');
 
     this.setName(this.temperatureSensor, 'Indoor Temperature');
     this.setName(this.humiditySensor, 'Indoor Humidity');

@@ -5,10 +5,6 @@
   "schema": {
     "type": "object",
     "properties": {
-      "name": {
-        "title": "Name",
-        "type": "string"
-      },
       "mac": {
         "title": "MAC Address",
         "type": "string",
@@ -342,12 +338,11 @@
       "expanded": false,
       "title": "Base Station",
       "items": [
-        "name",
         "mac",
         {
           "type": "section",
           "expandable": true,
-          "expanded": false,
+          "expanded": true,
           "title": "Data Report Service",
           "items": [
             "port",

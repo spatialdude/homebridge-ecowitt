@@ -14,6 +14,7 @@ export class EcowittAccessory {
 
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
       .setCharacteristic(this.platform.Characteristic.Manufacturer, 'Ecowitt')
+      .setCharacteristic(this.platform.Characteristic.ProductData, `${platform.baseStationInfo.frequency}Hz`)
       .setCharacteristic(this.platform.Characteristic.SerialNumber, platform.baseStationInfo.serialNumber)
       .setCharacteristic(this.platform.Characteristic.HardwareRevision, platform.baseStationInfo.hardwareRevision)
       .setCharacteristic(this.platform.Characteristic.SoftwareRevision, platform.baseStationInfo.softwareRevision)
@@ -22,16 +23,10 @@ export class EcowittAccessory {
 
   //----------------------------------------------------------------------------
 
-  setModel(model: string) {
+  setModel(model: string, name: string) {
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.Model, model);
-  }
-
-  //----------------------------------------------------------------------------
-
-  setProductData(productData: string) {
-    this.accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.ProductData, productData);
+      .setCharacteristic(this.platform.Characteristic.Model, model)
+      .setCharacteristic(this.platform.Characteristic.Name, name);
   }
 
   //----------------------------------------------------------------------------

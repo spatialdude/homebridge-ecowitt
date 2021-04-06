@@ -11,16 +11,19 @@ export class GW1000 extends ThermoHygroBaroSensor {
   ) {
     super(platform, accessory);
 
-    this.setModel(platform.baseStationInfo.model);
-    this.setProductData(this.platform.baseStationInfo.productData);
+    this.setModel(
+      'GW1000',
+      /*'WiFi Weather Station */ 'Gateway with Indoor Temperature, Humidity and Barometric Sensor');
 
     this.accessory.getService(this.platform.Service.AccessoryInformation)!
-      .setCharacteristic(this.platform.Characteristic.Name, this.platform.baseStationInfo.name)
-      .setCharacteristic(this.platform.Characteristic.ConfiguredName, this.platform.baseStationInfo.deviceName);
+      .setCharacteristic(this.platform.Characteristic.ConfiguredName, this.platform.baseStationInfo.deviceName)
+      .setCharacteristic(this.platform.Characteristic.HardwareRevision, platform.baseStationInfo.model);
     //  .setCharacteristic(this.platform.Characteristic.SerialNumber, platform.baseStationInfo.serialNumber);
-    // .setCharacteristic(this.platform.Characteristic.HardwareRevision, platform.baseStationInfo.hardwareRevision)
     // .setCharacteristic(this.platform.Characteristic.SoftwareRevision, platform.baseStationInfo.softwareRevision)
     // .setCharacteristic(this.platform.Characteristic.FirmwareRevision, platform.baseStationInfo.firmwareRevision);
+
+    this.setName(this.temperatureSensor, 'Indoor Temperature');
+    this.setName(this.humiditySensor, 'Indoor Humidity');
   }
 
   update(dataReport) {

@@ -15,8 +15,9 @@ export class WH51 extends EcowittAccessory {
   ) {
     super(platform, accessory);
 
-    this.setModel('WH51');
-    this.setProductData(`${platform.baseStationInfo.frequency}Hz Wireless Soil Moisture Sensor`);
+    this.setModel(
+      'WH51',
+      'Wireless Soil Moisture Sensor');
     this.setSerialNumber(`CH${this.channel}`);
 
     this.name = this.platform.config?.soil?.[`name${this.channel}`] || `Soil Moisture CH${this.channel}`;
