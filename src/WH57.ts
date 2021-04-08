@@ -95,7 +95,23 @@ export class WH57 extends EcowittAccessory {
       timeText += ' ago';
     }
 
-    this.timeDistance.updateName(lightningNum > 0 ? `⚡${dataReport.lightning} km ${timeText}` : '⚡ --');
+    let distanceUnits = '';
+    let distance = 0;
+
+    switch (this.platform.config.lightning.units) {
+      case 'mi':
+        distance = Math.round(dataReport.lightning / 1.609 * 10) / 10;
+        distanceUnits = 'mi';
+        break;
+
+      case 'km':
+      default:
+        distance = dataReport.lightning;
+        distanceUnits = 'km';
+        break;
+    }
+
+    this.timeDistance.updateName(`⚡${distance} ${distanceUnits} ${timeText}`);
     this.timeDistance.updateOccupancyDetected(lightningNum > 0);
     this.timeDistance.updateStatusLowBattery(lowBattery);
   }

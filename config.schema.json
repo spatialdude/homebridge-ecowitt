@@ -183,6 +183,16 @@
           }
         }
       },
+      "thbin": {
+        "type": "object",
+        "properties": {
+          "hide": {
+            "title": "Hide",
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
       "th": {
         "type": "object",
         "properties": {
@@ -326,6 +336,26 @@
             "title": "Hide",
             "type": "boolean",
             "default": false
+          },
+          "units": {
+            "title": "Distance Units",
+            "type": "string",
+            "default": "km",
+            "oneOf": [
+              {
+                "title": "Kilometres",
+                "enum": [
+                  "km"
+                ]
+              },
+              {
+                "title": "Miles",
+                "enum": [
+                  "mi"
+                ]
+              }
+            ],
+            "required": true
           }
         }
       }
@@ -349,6 +379,15 @@
             "path"
           ]
         }
+      ]
+    },
+    {
+      "type": "fieldset",
+      "expandable": true,
+      "expanded": false,
+      "title": "Indoor Thermometer/Hygrometer/Barometer Sensor",
+      "items": [
+        "thbin.hide"
       ]
     },
     {
@@ -433,13 +472,6 @@
       "type": "fieldset",
       "expandable": true,
       "expanded": false,
-      "title": "Indoor Thermometer/Hygrometer/Barometer Sensor",
-      "items": []
-    },
-    {
-      "type": "fieldset",
-      "expandable": true,
-      "expanded": false,
       "title": "Multi-Channel Thermometer/Hygrometer Sensors",
       "items": [
         "th.hide",
@@ -475,7 +507,9 @@
           "condition": {
             "functionBody": "return !model.lightning.hide;"
           },
-          "items": []
+          "items": [
+            "lightning.units"
+          ]
         }
       ]
     },

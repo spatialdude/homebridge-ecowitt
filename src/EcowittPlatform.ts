@@ -13,9 +13,6 @@ import { WH65 } from './WH65';
 
 import * as restify from 'restify';
 import * as crypto from 'crypto';
-//import { platform } from 'node:os';
-//import { timeStamp } from 'node:console';
-//import { type } from 'node:os';
 
 interface BaseStationInfo {
   model: string;
@@ -179,6 +176,7 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
     this.log.info('stationTypeInfo:', JSON.stringify(stationTypeInfo));
     this.log.info('modelInfo:', JSON.stringify(modelInfo));
 
+    this.baseStationInfo.model = dataReport.model;
     this.baseStationInfo.frequency = dataReport.freq;
 
     if (Array.isArray(stationTypeInfo)) {
@@ -189,14 +187,14 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
     if (Array.isArray(modelInfo)) {
       switch (modelInfo[1]) {
         case 'GW1000':
-          this.baseStationInfo.model = dataReport.model;
           this.baseStationInfo.hardwareRevision = dataReport.stationtype;
           this.baseStationInfo.firmwareRevision = stationTypeInfo[2];
-          this.addSensorType(true, 'GW1000');
+          if (!this.config?.thbin?.hide) {
+            this.addSensorType(true, 'GW1000');
+          }
           break;
 
         case 'HP2551CA':
-          this.baseStationInfo.model = dataReport.model;
           this.baseStationInfo.softwareRevision = dataReport.stationtype;
           this.baseStationInfo.firmwareRevision = modelInfo[2];
           break;
