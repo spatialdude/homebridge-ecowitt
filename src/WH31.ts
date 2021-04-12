@@ -19,8 +19,8 @@ export class WH31 extends ThermoHygroSensor {
 
     const name = this.platform.config?.th?.[`name${this.channel}`];
 
-    this.setName(this.temperatureSensor, name || `Temperature CH${this.channel}`);
-    this.setName(this.humiditySensor, name || `Humidity CH${this.channel}`);
+    this.setName(this.temperatureSensor, name || `CH${this.channel} Temperature`);
+    this.setName(this.humiditySensor, name || `CH${this.channel} Humidity`);
   }
 
   update(dataReport) {
