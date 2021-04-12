@@ -84,7 +84,7 @@ export class WH65 extends ThermoHygroSensor {
     const windHide = this.platform.config?.ws?.wind?.hide || [];
 
     if (!windHide.includes('Direction')) {
-      this.windDirection = new WindSensor(platform, accessory, 'Wind Dir');
+      this.windDirection = new WindSensor(platform, accessory, 'Wind Direction');
     }
 
     if (!windHide.includes('Speed')) {
