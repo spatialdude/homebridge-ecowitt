@@ -385,15 +385,6 @@
       "type": "fieldset",
       "expandable": true,
       "expanded": false,
-      "title": "Indoor Thermometer/Hygrometer/Barometer Sensor",
-      "items": [
-        "thbin.hide"
-      ]
-    },
-    {
-      "type": "fieldset",
-      "expandable": true,
-      "expanded": false,
       "title": "Outdoor Weather Sensors",
       "items": [
         "ws.hide",
@@ -466,6 +457,15 @@
             }
           ]
         }
+      ]
+    },
+    {
+      "type": "fieldset",
+      "expandable": true,
+      "expanded": false,
+      "title": "Indoor Thermometer/Hygrometer/Barometer Sensor",
+      "items": [
+        "thbin.hide"
       ]
     },
     {
