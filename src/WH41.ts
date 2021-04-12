@@ -6,6 +6,7 @@ import { EcowittAccessory } from './EcowittAccessory';
 export class WH41 extends EcowittAccessory {
   protected battery: Service;
   protected airQualitySensor: Service;
+  protected airQualitySensor24H: Service;
   protected name: string;
 
   constructor(
@@ -28,6 +29,18 @@ export class WH41 extends EcowittAccessory {
     this.setName(this.airQualitySensor, this.name);
     this.setStatusActive(this.airQualitySensor, false);
 
+    const name24H = this.name + ' 24H Average';
+
+    this.airQualitySensor24H =
+    this.accessory.getService(name24H)
+    || this.accessory.addService(
+      this.platform.Service.AirQualitySensor,
+      name24H,
+      this.platform.serviceUuid(name24H));
+
+    this.setName(this.airQualitySensor24H, name24H);
+    this.setStatusActive(this.airQualitySensor24H, false);
+
     this.battery = this.addBattery(this.name, true);
   }
 
@@ -42,6 +55,7 @@ export class WH41 extends EcowittAccessory {
     this.platform.log.info('  pm25_avg_24h:', pm25_avg_24h);
 
     this.setStatusActive(this.airQualitySensor, true);
+    this.setStatusActive(this.airQualitySensor24H, true);
 
     // Battery
 
@@ -56,7 +70,21 @@ export class WH41 extends EcowittAccessory {
       this.platform.Characteristic.PM2_5Density,
       pm25);
 
-    const airQuality = pm25 < 5
+    this.airQualitySensor.updateCharacteristic(
+      this.platform.Characteristic.AirQuality,
+      this.airQuality(pm25));
+
+    this.airQualitySensor24H.updateCharacteristic(
+      this.platform.Characteristic.PM2_5Density,
+      pm25_avg_24h);
+
+    this.airQualitySensor24H.updateCharacteristic(
+      this.platform.Characteristic.AirQuality,
+      this.airQuality(pm25_avg_24h));
+  }
+
+  airQuality(pm25: number) {
+    return pm25 < 5
       ? this.platform.Characteristic.AirQuality.EXCELLENT
       : pm25 <= 10
         ? this.platform.Characteristic.AirQuality.GOOD
@@ -65,9 +93,5 @@ export class WH41 extends EcowittAccessory {
           : pm25 <= 25
             ? this.platform.Characteristic.AirQuality.INFERIOR
             : this.platform.Characteristic.AirQuality.POOR;
-
-    this.airQualitySensor.updateCharacteristic(
-      this.platform.Characteristic.AirQuality,
-      airQuality);
   }
 }
