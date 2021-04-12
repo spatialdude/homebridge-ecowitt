@@ -188,7 +188,7 @@ export class WH65 extends ThermoHygroSensor {
       const uv = parseInt(dataReport.uv);
 
       this.updateStatusActive(this.uvIndex, true);
-      this.updateName(this.uvIndex, `UV Index: ${this.toRisk(uv)} (${uv})`);
+      this.updateName(this.uvIndex, `UV Index: ${uv} ${this.toRisk(uv)}`);
       this.updateOccupancyDetected(this.uvIndex, uv > this.uvThreshold);
     }
 
