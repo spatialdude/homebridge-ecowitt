@@ -40,6 +40,8 @@ export class WH65 extends ThermoHygroSensor {
   protected yearlyRain: RainSensor | undefined;
   protected totalRain: RainSensor | undefined;
 
+  protected dewPoint: Service;
+
   constructor(
     protected readonly platform: EcowittPlatform,
     protected readonly accessory: PlatformAccessory,
@@ -52,6 +54,19 @@ export class WH65 extends ThermoHygroSensor {
 
     this.setName(this.temperatureSensor, 'Outdoor Temperature');
     this.setName(this.humiditySensor, 'Outdoor Humidity');
+
+    // Dew point
+
+    if (!this.platform.config.ws?.dewpoint?.hide) {
+      const nameDP = 'Dew Point';
+      this.dewPoint = this.accessory.getService(nameDP)
+      || this.accessory.addService(
+        this.platform.Service.TemperatureSensor,
+        nameDP,
+        this.platform.serviceUuid(nameDP));
+
+      this.setName(this.dewPoint, nameDP);
+    }
 
     // Solar Radiation
 
@@ -67,6 +82,7 @@ export class WH65 extends ThermoHygroSensor {
           minValue: 0,
           maxValue: 150000,
         });
+
     }
 
     // UV Sensor
@@ -209,6 +225,17 @@ export class WH65 extends ThermoHygroSensor {
     this.monthlyRain?.updateTotal(parseFloat(dataReport.monthlyrainin));
     this.yearlyRain?.updateTotal(parseFloat(dataReport.yearlyrainin));
     this.totalRain?.updateTotal(parseFloat(dataReport.totalrainin));
+
+    // Dew point
+
+    const t = Utils.toCelcius(dataReport.tempf);
+    const rh = parseFloat(dataReport.humidity);
+    const dp = Math.pow(rh/100, 1/8) * (112+(0.9*t)) + 0.1*t-112;
+
+    this.dewPoint.updateCharacteristic(
+      this.platform.Characteristic.CurrentTemperature,
+      dp);
+    this.updateStatusLowBattery(this.dewPoint, lowBattery);
   }
 
   toRisk(uvIndex) {
