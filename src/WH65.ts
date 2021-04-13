@@ -228,14 +228,15 @@ export class WH65 extends ThermoHygroSensor {
 
     // Dew point
 
-    const t = Utils.toCelcius(dataReport.tempf);
-    const rh = parseFloat(dataReport.humidity);
-    const dp = Math.pow(rh/100, 1/8) * (112+(0.9*t)) + 0.1*t-112;
+    if (this.dewPoint) {
+      const t = Utils.toCelcius(dataReport.tempf);
+      const rh = parseFloat(dataReport.humidity);
+      const dp = Math.pow(rh/100, 1/8) * (112+(0.9*t)) + 0.1*t-112;
 
-    this.dewPoint.updateCharacteristic(
-      this.platform.Characteristic.CurrentTemperature,
-      dp);
-    this.updateStatusLowBattery(this.dewPoint, lowBattery);
+      this.dewPoint.updateCharacteristic(
+        this.platform.Characteristic.CurrentTemperature,
+        dp);
+    }
   }
 
   toRisk(uvIndex) {
