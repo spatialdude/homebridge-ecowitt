@@ -40,7 +40,7 @@ export class WH65 extends ThermoHygroSensor {
   protected yearlyRain: RainSensor | undefined;
   protected totalRain: RainSensor | undefined;
 
-  protected dewPoint: Service;
+  protected dewPoint: Service | undefined;
 
   constructor(
     protected readonly platform: EcowittPlatform,
