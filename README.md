@@ -11,7 +11,7 @@ Features include -
 * Sensors can be hidden via the plugin settings
 * Configurable display units
 
-**Note**: This plugin is a beta and still in development. Please consider this when installing it on your system. Feedback is welcome.
+**Note**: This plugin is still in development. Please consider this when installing it on your system. Feedback is welcome.
 
 ## Requirements
 * GW1000 Gateway or HP2551 Weather Display Console
@@ -25,7 +25,7 @@ Search for "Ecowitt" in [homebridge-config-ui-x](https://github.com/oznu/homebri
 #### Option 2: Manually Install:
 
 ```
-sudo npm install -g homebridge-ecowitt@beta
+sudo npm install -g homebridge-ecowitt
 ```
 
 ## Configuration
