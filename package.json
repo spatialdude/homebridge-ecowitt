@@ -1,9 +1,9 @@
 {
-  "private": true,
+  "private": false,
   "displayName": "Homebridge Ecowitt",
   "name": "homebridge-ecowitt",
   "version": "1.0.0",
-  "description": "A short description about what your plugin does.",
+  "description": "Provides support for a wide range of Ecowitt sensors.",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",

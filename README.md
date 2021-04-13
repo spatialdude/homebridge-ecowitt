@@ -25,7 +25,7 @@ Search for "Ecowitt" in [homebridge-config-ui-x](https://github.com/oznu/homebri
 #### Option 2: Manually Install:
 
 ```
-sudo npm install -g homebridge-ecowitt
+sudo npm install -g homebridge-ecowitt@beta
 ```
 
 ## Configuration
