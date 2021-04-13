@@ -1,150 +1,148 @@
 
-<p align="center">
+# Ecowitt Sensors Homebridge Plugin
 
-<img src="https://github.com/homebridge/branding/raw/master/logos/homebridge-wordmark-logo-vertical.png" width="150">
+A Homebridge plugin providing support for a wide range of **Ecowitt** sensors.
 
-</p>
+The plugin operates as a service that listens for data reports from an Ecowitt WiFi Gateway or Weather Display Console.
 
+Features include -
+* Support for a wide range of sensor types
+* Operates locally without the need for any cloud services
+* Sensors can be hidden via the plugin settings
+* Configurable display units
 
-# Homebridge Platform Plugin Template
+**Note**: This plugin is a beta and still in development. Please consider this when installing it on your system. Feedback is welcome.
 
-This is a template Homebridge platform plugin and can be used as a base to help you get started developing your own plugin.
+## Requirements
+* GW1000 Gateway or HP2551 Weather Display Console
 
-This template should be used in conjunction with the [developer documentation](https://developers.homebridge.io/). A full list of all supported service types, and their characteristics is available on this site.
+## Installation
 
-## Clone As Template
+#### Option 1: Install via Homebridge Config UI X:
 
-Click the link below to create a new GitHub Repository using this template, or click the *Use This Template* button above.
+Search for "Ecowitt" in [homebridge-config-ui-x](https://github.com/oznu/homebridge-config-ui-x) and install `homebridge-ecowitt`.
 
-<span align="center">
-
-### [Create New Repository From Template](https://github.com/homebridge/homebridge-plugin-template/generate)
-
-</span>
-
-## Setup Development Environment
-
-To develop Homebridge plugins you must have Node.js 12 or later installed, and a modern code editor such as [VS Code](https://code.visualstudio.com/). This plugin template uses [TypeScript](https://www.typescriptlang.org/) to make development easier and comes with pre-configured settings for [VS Code](https://code.visualstudio.com/) and ESLint. If you are using VS Code install these extensions:
-
-* [ESLint](https://marketplace.visualstudio.com/items?itemName=dbaeumer.vscode-eslint)
-
-## Install Development Dependencies
-
-Using a terminal, navigate to the project folder and run this command to install the development dependencies:
+#### Option 2: Manually Install:
 
 ```
-npm install
+sudo npm install -g homebridge-ecowitt
 ```
 
-## Update package.json
+## Configuration
 
-Open the [`package.json`](./package.json) and change the following attributes:
+It is recommended to configure the plugin via the **Settings** UI.
 
-* `name` - this should be prefixed with `homebridge-` or `@username/homebridge-` and contain no spaces or special characters apart from a dashes
-* `displayName` - this is the "nice" name displayed in the Homebridge UI
-* `repository.url` - Link to your GitHub repo
-* `bugs.url` - Link to your GitHub repo issues page
+The plugin's **Base Station** settings must be configured before configuring the Ecowitt gateway or display console. 
 
-When you are ready to publish the plugin you should set `private` to false, or remove the attribute entirely.
+### MAC Address
 
-## Update Plugin Defaults
+This can be found int he *About* screen on the Weather Display Console or via the **WS View** app.
 
-Open the [`src/settings.ts`](./src/settings.ts) file and change the default values:
+The MAC address is used validate that the data report received is coming from the correct gateway or display console.
 
-* `PLATFORM_NAME` - Set this to be the name of your platform. This is the name of the platform that users will use to register the plugin in the Homebridge `config.json`.
-* `PLUGIN_NAME` - Set this to be the same name you set in the [`package.json`](./package.json) file. 
+### Data Report Service
 
-Open the [`config.schema.json`](./config.schema.json) file and change the following attribute:
+The **Port** and **Path** settings configure on which port and path the data report service will listen for data reports coming from the gateway or display console.
 
-* `pluginAlias` - set this to match the `PLATFORM_NAME` you defined in the previous step.
+Typical settings for the are `8080` for the port and `/data/report` for the path. Other values may be used as desired. Depending on your system or network configuration ensure the **Port** number being used is not blocked.
 
-## Build Plugin
+### Geteway / Display Console
 
-TypeScript needs to be compiled into JavaScript before it can run. The following command will compile the contents of your [`src`](./src) directory and put the resulting code into the `dist` folder.
+After configuring the **Base Station** settings, restart Homebridge and confirm via the status log that there are no errors and that the data report service has been started and is listening.
 
-```
-npm run build
-```
+The gateway or display console can be configured using the Ecowitt **WS View** app. The display console can also be configured directly via its UI.
 
-## Link To Homebridge
+Before updating the gateway or display console to report its data to the plugin, ensure all the available sensors have been configured and are correctly reporting their data.
 
-Run this command so your global install of Homebridge can discover the plugin in your development environment:
+The plugin requires the custom weather service to be configured to report data with **Path** and **Port** parameters that match the same in the **Base Station** settings.
 
-```
-npm link
-```
+The service **Protocol Type** must be configured as **Ecowitt**. The **Upload Interval** can be configured as desired. 20 seconds is recommended as the data report messages are relatively small and do not put much load on the network or Homebridge host. 
 
-You can now start Homebridge, use the `-D` flag so you can see debug log messages in your plugin:
+It is also recommended to configure the Homebridge host system with a static IP address to avoid issues with address changes after system reboots.
 
-```
-homebridge -D
-```
-
-## Watch For Changes and Build Automatically
-
-If you want to have your code compile automatically as you make changes, and restart Homebridge automatically between changes you can run:
-
-```
-npm run watch
-```
-
-This will launch an instance of Homebridge in debug mode which will restart every time you make a change to the source code. It will load the config stored in the default location under `~/.homebridge`. You may need to stop other running instances of Homebridge while using this command to prevent conflicts. You can adjust the Homebridge startup command in the [`nodemon.json`](./nodemon.json) file.
-
-## Customise Plugin
-
-You can now start customising the plugin template to suit your requirements.
-
-* [`src/platform.ts`](./src/platform.ts) - this is where your device setup and discovery should go.
-* [`src/platformAccessory.ts`](./src/platformAccessory.ts) - this is where your accessory control logic should go, you can rename or create multiple instances of this file for each accessory type you need to implement as part of your platform plugin. You can refer to the [developer documentation](https://developers.homebridge.io/) to see what characteristics you need to implement for each service type.
-* [`config.schema.json`](./config.schema.json) - update the config schema to match the config you expect from the user. See the [Plugin Config Schema Documentation](https://developers.homebridge.io/#/config-schema).
-
-## Versioning Your Plugin
-
-Given a version number `MAJOR`.`MINOR`.`PATCH`, such as `1.4.3`, increment the:
-
-1. **MAJOR** version when you make breaking changes to your plugin,
-2. **MINOR** version when you add functionality in a backwards compatible manner, and
-3. **PATCH** version when you make backwards compatible bug fixes.
-
-You can use the `npm version` command to help you with this:
-
-```bash
-# major update / breaking changes
-npm version major
-
-# minor update / new features
-npm version update
-
-# patch / bugfixes
-npm version patch
-```
-
-## Publish Package
-
-When you are ready to publish your plugin to [npm](https://www.npmjs.com/), make sure you have removed the `private` attribute from the [`package.json`](./package.json) file then run:
-
-```
-npm publish
-```
-
-If you are publishing a scoped plugin, i.e. `@username/homebridge-xxx` you will need to add `--access=public` to command the first time you publish.
-
-#### Publishing Beta Versions
-
-You can publish *beta* versions of your plugin for other users to test before you release it to everyone.
-
-```bash
-# create a new pre-release version (eg. 2.1.0-beta.1)
-npm version prepatch --preid beta
-
-# publsh to @beta
-npm publish --tag=beta
-```
-
-Users can then install the  *beta* version by appending `@beta` to the install command, for example:
-
-```
-sudo npm install -g homebridge-example-plugin@beta
-```
+After the gateway or display console has been configuration has been updated, sensor data reports will appear in the Homebridge status log. The plugin will automatically configure the accessories based on the first data report received.
 
 
+## Tested Devices
+
+* GW1000 - WiFi Weather Station Gateway with Indoor Temperature, Humidity and Barometric Sensor
+* HP2551 - Weather Station Display Console
+* WH24 - Solar Powered 7-in-1 Outdoor Sensor
+* WH31 - Multi-Channel Temperature and humidity Sensor
+* WH32 - Indoor Temperature, Humidity and Barometric Sensor
+* WH41 - PM2.5 Air Quality Sensor Monitor Outdoor
+* WH51 - Wireless Soil Moisture Sensor
+* WH55 - Wireless Water Leak Detection Sensor with Loud Audio Alarm
+* WH57 - Wireless Lightning Detection Sensor
+* WH65 - Solar Powered 7-in-1 Outdoor Sensor
+
+## Notes
+### Outdoor Weather Sensors
+#### Wind
+* Sensors (Can be indvidually hidden via the plugin settings)
+    * Direction
+    * Speed
+    * Gust
+    * Maximum Daily Gust 
+* Presented as **Motion Sensors**
+  * **Motion Detected** status is triggered based on thresholds configured in the plugin settings
+* Thresholds are configured using the [Beaufort Scale](https://simple.wikipedia.org/wiki/Beaufort_scale)
+* Wind speed display units can be configured in the plugin setting.
+  
+#### Rain
+* Sensors (Can be individually hidden via the plugin settings)
+  * Rate
+  * Event
+  * Hourly
+  * Daily
+  * Weekly
+  * Monthly
+  * Yearly
+* Presented as **Leak Sensors**
+  * For the Rate sensor, the **Leak Detected** status is based on the threshold configured in the plugin settings. 
+  * For all other sensors the **Leak Detected** status is triggered if the sensor's value is non-zero
+* Rain display units are configured the plugin settings 
+  
+#### UV Index
+* Can be hidden via plugin settings
+* Presented as an **Occupancy Sensor**
+  * **Occupancy Detected** status is based on the threshold configured in the plugin settings
+  
+#### Solar Radiation
+* Can be hidden via plugin settings
+* Presented as a **Light Sensor**
+* Display units configured in plugin settings
+  
+### Indoor Thermometer/Hygrometer/Barometer Sensor
+* Can be hidden via plugin settings
+  
+### Multi-Channel Thermometer/Hygrometer Sensors
+* Can be hidden via plugin settings
+* Up to 8 sensors supported
+* Sensors can be individually named via the plugin settings
+  
+### Lightning Detection Sensor
+* Can be hidden via plugin settings
+* Number of lighing events is presented as a **Contact Sensor**
+  * **Open** state when number of events is > 0
+  * **Closed** state when number of events is 0
+* Distance and time presented as an **Occupancy Sensor**
+  * **Occupancy Detected** status is set when number of events is > 0
+* Distance units configured via plugin settings
+
+### Soil Moisture Sensors
+* Can be hidden via plugin settings
+* Up to 8 sensors supported
+* Sensors can be individually named via the plugin settings
+* Presented as **Humidity Sensors**
+ 
+### Leak Detection Sensors
+* Can be hidden via plugin settings
+* Up to 4 sensors supported
+* Sensors can be individually named via the plugin settings
+  
+### PM2.5 Air Quality Sensors
+* Can be hidden via plugin settings
+* Up to 4 sensors supported
+* Sensors can be individually named via the plugin settings
+* Current and 24H Average presented as separate sensors
