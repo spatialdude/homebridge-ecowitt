@@ -172,10 +172,11 @@
                   "enum": [
                     "Rate",
                     "Event",
+                    "Hourly",
                     "Daily",
                     "Weekly",
                     "Monthly",
-                    "Total"
+                    "Yearly"
                   ]
                 }
               }
