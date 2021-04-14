@@ -220,14 +220,14 @@ export class WH65 extends ThermoHygroSensor {
 
     // Rain
 
-    this.rainRate?.updateRate(parseFloat(dataReport.rainratein));
-    this.eventRain?.updateTotal(parseFloat(dataReport.eventrainin));
-    this.hourlyRain?.updateTotal(parseFloat(dataReport.hourlyrainin));
-    this.dailyRain?.updateTotal(parseFloat(dataReport.dailyrainin));
-    this.weeklyRain?.updateTotal(parseFloat(dataReport.weeklyrainin));
-    this.monthlyRain?.updateTotal(parseFloat(dataReport.monthlyrainin));
-    this.yearlyRain?.updateTotal(parseFloat(dataReport.yearlyrainin));
-    this.totalRain?.updateTotal(parseFloat(dataReport.totalrainin));
+    this.rainRate?.updateRate(parseFloat(dataReport.rainratein), this.platform.config.ws?.rain?.rateThreshold);
+    this.eventRain?.updateTotal(parseFloat(dataReport.eventrainin), this.platform.config.ws?.rain?.eventThreshold);
+    this.hourlyRain?.updateTotal(parseFloat(dataReport.hourlyrainin), this.platform.config.ws?.rain?.hourlyThreshold);
+    this.dailyRain?.updateTotal(parseFloat(dataReport.dailyrainin), this.platform.config.ws?.rain?.dailyThreshold);
+    this.weeklyRain?.updateTotal(parseFloat(dataReport.weeklyrainin), this.platform.config.ws?.rain?.weeklyThreshold);
+    this.monthlyRain?.updateTotal(parseFloat(dataReport.monthlyrainin), this.platform.config.ws?.rain?.monthlyThreshold);
+    this.yearlyRain?.updateTotal(parseFloat(dataReport.yearlyrainin), this.platform.config.ws?.rain?.yearlyThreshold);
+    this.totalRain?.updateTotal(parseFloat(dataReport.totalrainin), undefined);
 
     // Dew point
 

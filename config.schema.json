@@ -184,6 +184,35 @@
                     "Yearly"
                   ]
                 }
+              },
+              "rateThreshold": {
+                "title": "Rate threshold (mm)",
+                "type": "number"
+              },
+              "eventThreshold": {
+                "title": "Event threshold (mm)",
+                "type": "number"
+              },
+              "hourlyThreshold": {
+                "title": "Hourly threshold (mm)",
+                "type": "number"
+              },
+              "dailyThreshold": {
+                "title": "Daily threshold (mm)",
+                "type": "number"
+              },
+              "weeklyThreshold": {
+                "title": "Weekly threshold (mm)",
+                "type": "number"
+              },
+              "monthlyThreshold": {
+                "title": "Monthly threshold (mm)",
+                "type": "number"
+              },
+              "yearlyThreshold": {
+                "title": "Yearly threshold (mm)",
+                "type": "number",
+                "description": "Blank threshold = no detection trigger"
               }
             }
           }
@@ -422,7 +451,13 @@
               "items": [
                 "ws.rain.units",
                 "ws.rain.hide",
-                "ws.rain.rateThreshold"
+                "ws.rain.rateThreshold",
+                "ws.rain.eventThreshold",
+                "ws.rain.hourlyThreshold",
+                "ws.rain.dailyThreshold",
+                "ws.rain.weeklyThreshold",
+                "ws.rain.monthlyThreshold",
+                "ws.rain.yearlyThreshold"
               ]
             },
             {

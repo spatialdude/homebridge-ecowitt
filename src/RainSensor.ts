@@ -22,7 +22,7 @@ export class RainSensor extends Sensor {
 
   //----------------------------------------------------------------------------
 
-  public updateRate(ratein: number) {
+  public updateRate(ratein: number, thresholdmm) {
     if (!isFinite(ratein)) {
       //this.updateActive(false);
       this.updateName('N/A');
@@ -30,26 +30,29 @@ export class RainSensor extends Sensor {
     }
 
     let rate: string;
+    let ratemm: number;
 
     switch (this.platform.config?.ws?.rain?.units) {
       case 'in':
         rate = `${ratein} in/h`;
+        ratemm = ratein * 25.4;
         break;
 
       default:
       case 'mm':
-        rate = `${Math.round(ratein * 254) / 10} mm/h`;
+        ratemm = Math.round(ratein * 254) / 10;
+        rate = `${ratemm} mm/h`;
         break;
     }
 
     //this.updateActive(true);
     this.updateName(`${this.name}: ${rate} ${this.toIntensity(ratein)}`);
-    this.updateDetected(ratein > 0);
+    this.updateDetected(isFinite(thresholdmm) && ratemm > thresholdmm);
   }
 
   //----------------------------------------------------------------------------
 
-  public updateTotal(totalin: number) {
+  public updateTotal(totalin: number, thresholdmm) {
     if (!isFinite(totalin)) {
       //this.updateActive(false);
       this.updateName('N/A');
@@ -57,21 +60,24 @@ export class RainSensor extends Sensor {
     }
 
     let total: string;
+    let totalmm: number;
 
     switch (this.platform.config?.ws?.rain?.units) {
       case 'in':
         total = `${totalin} in`;
+        totalmm = totalin * 25.4;
         break;
 
       default:
       case 'mm':
-        total = `${Math.round(totalin * 254) / 10} mm`;
+        totalmm = Math.round(totalin * 254) / 10;
+        total = `${totalmm} mm`;
         break;
     }
 
     //this.updateActive(true);
     this.updateName(`${this.name}: ${total}`);
-    this.updateDetected(totalin > 0);
+    this.updateDetected(isFinite(thresholdmm) && totalmm > thresholdmm);
   }
 
   //----------------------------------------------------------------------------
