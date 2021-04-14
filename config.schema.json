@@ -57,6 +57,11 @@
                 "title": "Hide",
                 "type": "boolean",
                 "default": false
+              },
+              "luxFactor": {
+                "title": "W/m² to lux conversion factor",
+                "type": "number",
+                "default": 126.7
               }
             }
           },
@@ -452,7 +457,9 @@
                   "condition": {
                     "functionBody": "return !model.ws.solarradiation.hide;"
                   },
-                  "items": []
+                  "items": [
+                    "ws.solarradiation.luxFactor"
+                  ]
                 }
               ]
             }

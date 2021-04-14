@@ -203,14 +203,3 @@ export function toWindSector(degrees): string {
 }
 
 //------------------------------------------------------------------------------
-
-export function toLux(wm2): number {
-
-  if (typeof wm2 !== 'number') {
-    wm2 = parseFloat(wm2);
-  }
-
-  return wm2 > 0
-    ? wm2 / 0.007892197
-    : 0;
-}

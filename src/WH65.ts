@@ -82,7 +82,6 @@ export class WH65 extends ThermoHygroSensor {
           minValue: 0,
           maxValue: 150000,
         });
-
     }
 
     // UV Sensor
@@ -182,7 +181,6 @@ export class WH65 extends ThermoHygroSensor {
 
     this.updateStatusActive(this.temperatureSensor, true);
     this.updateStatusActive(this.humiditySensor, true);
-    this.updateStatusActive(this.solarRadiation, true);
 
     const lowBattery = dataReport.wh65batt === '1';
 
@@ -193,10 +191,15 @@ export class WH65 extends ThermoHygroSensor {
     this.updateStatusLowBattery(this.humiditySensor, lowBattery);
 
     if (this.solarRadiation) {
-      this.updateName(this.solarRadiation, `Solar Radiation: ${dataReport.solarradiation} W/m²`);
+      const wm2 = parseFloat(dataReport.solarradiation);
+      const luxFactor = this.platform.config.ws.solarradiation?.luxFactor ?? 126.7;
+      const lux = wm2 * luxFactor;
+
+      this.updateStatusActive(this.solarRadiation, true);
+      this.updateName(this.solarRadiation, `Solar Radiation: ${wm2} W/m²`);
       this.solarRadiation.updateCharacteristic(
         this.platform.Characteristic.CurrentAmbientLightLevel,
-        Math.round(Utils.toLux(dataReport.solarradiation)));
+        Math.round(lux));
       this.updateStatusLowBattery(this.solarRadiation, lowBattery);
     }
 
