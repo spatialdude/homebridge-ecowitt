@@ -38,7 +38,7 @@ export class RainSensor extends Sensor {
 
       default:
       case 'mm':
-        rate = `${Math.round(ratein * 25.4)} mm/h`;
+        rate = `${Math.round(ratein * 254) / 10} mm/h`;
         break;
     }
 
@@ -65,7 +65,7 @@ export class RainSensor extends Sensor {
 
       default:
       case 'mm':
-        total = `${Math.round(totalin * 25.4)} mm`;
+        total = `${Math.round(totalin * 254) / 10} mm`;
         break;
     }
 
