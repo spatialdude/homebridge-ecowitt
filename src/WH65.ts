@@ -193,7 +193,7 @@ export class WH65 extends ThermoHygroSensor {
     if (this.solarRadiation) {
       const wm2 = parseFloat(dataReport.solarradiation);
       const luxFactor = this.platform.config.ws.solarradiation?.luxFactor ?? 126.7;
-      const lux = wm2 * luxFactor;
+      const lux = Math.round(wm2 * luxFactor * 10) / 10;
 
       this.updateStatusActive(this.solarRadiation, true);
       this.updateName(this.solarRadiation, `Solar Radiation: ${wm2} W/m²`);
