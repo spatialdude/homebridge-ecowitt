@@ -199,7 +199,7 @@ export class WH65 extends ThermoHygroSensor {
       this.updateName(this.solarRadiation, `Solar Radiation: ${wm2} W/m²`);
       this.solarRadiation.updateCharacteristic(
         this.platform.Characteristic.CurrentAmbientLightLevel,
-        Math.round(lux));
+        lux);
       this.updateStatusLowBattery(this.solarRadiation, lowBattery);
     }
 
