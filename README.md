@@ -11,6 +11,16 @@ Features include -
 * Sensors can be hidden via the plugin settings
 * Configurable display units
 
+## Release Notes
+
+* 1.1.0
+  * Added rain detection thresholds
+  * Added lux conversion factor setting
+  * Round inches to mm conversion to 1 decimal place
+
+* 1.0.0
+  * Initial release
+
 **Note**: This plugin is still in development. Please consider this when installing it on your system. Feedback is welcome.
 
 ## Requirements
@@ -76,7 +86,9 @@ After the gateway or display console has been configuration has been updated, se
 * WH57 - Wireless Lightning Detection Sensor
 * WH65 - Solar Powered 7-in-1 Outdoor Sensor
 
-## Notes
+## Sensor Notes
+
+
 ### Outdoor Weather Sensors
 #### Wind
 * Sensors (Can be indvidually hidden via the plugin settings)
@@ -101,7 +113,7 @@ After the gateway or display console has been configuration has been updated, se
 * Presented as **Leak Sensors**
   * For the Rate sensor, the **Leak Detected** status is based on the threshold configured in the plugin settings. 
   * For all other sensors the **Leak Detected** status is triggered if the sensor's value is non-zero
-* Rain display units are configured the plugin settings 
+* Rain display units and detection thresholds are configured the plugin settings 
   
 #### UV Index
 * Can be hidden via plugin settings
@@ -111,7 +123,7 @@ After the gateway or display console has been configuration has been updated, se
 #### Solar Radiation
 * Can be hidden via plugin settings
 * Presented as a **Light Sensor**
-* Display units configured in plugin settings
+* Display units and conversion factor to lux are configured in plugin settings
   
 ### Indoor Thermometer/Hygrometer/Barometer Sensor
 * Can be hidden via plugin settings
