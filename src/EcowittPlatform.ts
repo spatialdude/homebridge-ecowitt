@@ -170,8 +170,8 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
   //----------------------------------------------------------------------------
 
   registerAccessories(dataReport) {
-    const stationTypeInfo = dataReport?.stationtype.match(/(EasyWeather|GW1000)_?(.*)/);
-    const modelInfo = dataReport?.model.match(/(HP2551CA|GW1000)_(.*)/);
+    const stationTypeInfo = dataReport?.stationtype.match(/(EasyWeather|GW1000|GW1000B)_?(.*)/);
+    const modelInfo = dataReport?.model.match(/(HP2551CA|GW1000|GW1000B)_(.*)/);
 
     this.log.info('stationTypeInfo:', JSON.stringify(stationTypeInfo));
     this.log.info('modelInfo:', JSON.stringify(modelInfo));
@@ -187,6 +187,7 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
     if (Array.isArray(modelInfo)) {
       switch (modelInfo[1]) {
         case 'GW1000':
+        case 'GW1000B':
           this.baseStationInfo.hardwareRevision = dataReport.stationtype;
           this.baseStationInfo.firmwareRevision = stationTypeInfo[2];
           if (!this.config?.thbin?.hide) {
