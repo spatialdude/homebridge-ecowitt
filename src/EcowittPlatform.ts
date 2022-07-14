@@ -172,8 +172,8 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
   //----------------------------------------------------------------------------
 
   registerAccessories(dataReport) {
-    const stationTypeInfo = dataReport?.stationtype.match(/(EasyWeather|GW1[01]00(?:B?))_?(.*)/);
-    const modelInfo = dataReport?.model.match(/(HP2551CA|GW1[01]00)B?_?(.*)/);
+    const stationTypeInfo = dataReport?.stationtype.match(/(EasyWeather|GW1[01]00(?:[AB]?))_?(.*)/);
+    const modelInfo = dataReport?.model.match(/(HP2551CA|GW1[01]00)[AB]?_?(.*)/);
 
     this.log.info('stationTypeInfo:', JSON.stringify(stationTypeInfo));
     this.log.info('modelInfo:', JSON.stringify(modelInfo));
