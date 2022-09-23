@@ -1,6 +1,6 @@
 import { Service, PlatformAccessory /*ServiceEventTypes*/ } from 'homebridge';
 import { EcowittPlatform } from './EcowittPlatform';
-import { ThermoHygroSensor } from './ThermoHygroSensor';
+import { ThermoHygroBaroSensor } from './ThermoHygroBaroSensor';
 
 import * as Utils from './Utils.js';
 
@@ -21,12 +21,12 @@ const uvInfos = [
 
 //------------------------------------------------------------------------------
 
-export class GW2000C extends ThermoHygroSensor {
+export class GW2000C extends ThermoHygroBaroSensor {
   protected solarRadiation!: Service;
   protected uvIndex!: Service;
   protected uvThreshold: number;
 
-  protected windDirection: WindSensor | undefined;
+  protected windSensor: WindSensor | undefined;
   protected windSpeed: WindSensor | undefined;
   protected windGust: WindSensor | undefined;
   protected maxDailyGust: WindSensor | undefined;
@@ -50,7 +50,11 @@ export class GW2000C extends ThermoHygroSensor {
 
     this.setModel(
       'GW2000C',
-      'Solar Powererd 7-in-1 Outdoor Sensor');
+      'Solar Powered 7-in-1 Outdoor Sensor');
+
+    this.accessory.getService(this.platform.Service.AccessoryInformation)!
+      .setCharacteristic(this.platform.Characteristic.ConfiguredName, this.platform.baseStationInfo.deviceName)
+      .setCharacteristic(this.platform.Characteristic.HardwareRevision, platform.baseStationInfo.model);
 
     this.setName(this.temperatureSensor, 'Outdoor Temperature');
     this.setName(this.humiditySensor, 'Outdoor Humidity');
@@ -96,18 +100,10 @@ export class GW2000C extends ThermoHygroSensor {
 
     // Wind
 
-    const windHide = this.platform.config?.ws?.wind?.hide || [];
-
-    if (!windHide.includes('Direction')) {
-      this.windDirection = new WindSensor(platform, accessory, 'Wind Direction');
-    }
-
-    if (!windHide.includes('Speed')) {
-      this.windSpeed = new WindSensor(platform, accessory, 'Wind Speed');
-    }
+    this.windSensor = new WindSensor(platform, accessory, 'Wind');
 
     if (!windHide.includes('Gust')) {
-      this.windGust = new WindSensor(platform, accessory, 'Wind Gust');
+      this.windGust = new WindSensor(platform, accessory, 'Gust');
     }
 
     if (!windHide.includes('MaxDailyGust')) {
@@ -213,8 +209,9 @@ export class GW2000C extends ThermoHygroSensor {
 
     // Wind
 
-    this.windDirection?.updateDirection(winddir);
-    this.windSpeed?.updateSpeed(windspeedmph, this.platform.config.ws.wind.speedThresold);
+    this.windSensor?.updateDirection(winddir);
+    this.windSensor?.updateSpeed(windspeedmph, this.platform.config.ws.wind.speedThresold);
+    
     this.windGust?.updateSpeed(windgustmph, this.platform.config.ws.wind.gustThresold);
     this.maxDailyGust?.updateSpeed(maxdailygust, this.platform.config.ws.wind.maxDailyGustThresold);
 
