@@ -171,14 +171,13 @@ export class GW2000C extends ThermoHygroSensor {
     this.platform.log.info('  windgustmph:', windgustmph);
     this.platform.log.info('  maxdailygust:', maxdailygust);
 
-    this.platform.log.info('  rainratein:', dataReport.rainratein);
-    this.platform.log.info('  eventrainin:', dataReport.eventrainin);
-    this.platform.log.info('  hourlyrainin:', dataReport.hourlyrainin);
-    this.platform.log.info('  dailyrainin:', dataReport.dailyrainin);
-    this.platform.log.info('  weeklyrainin:', dataReport.weeklyrainin);
-    this.platform.log.info('  monthlyrainin:', dataReport.monthlyrainin);
-    this.platform.log.info('  yearlyrainin:', dataReport.yearlyrainin);
-    this.platform.log.info('  totalrainin:', dataReport.totalrainin);
+    this.platform.log.info('  rainratein:', dataReport.rrain_piezo);
+    this.platform.log.info('  eventrainin:', dataReport.erain_piezo);
+    this.platform.log.info('  hourlyrainin:', dataReport.hrain_piezo);
+    this.platform.log.info('  dailyrainin:', dataReport.drain_piezo);
+    this.platform.log.info('  weeklyrainin:', dataReport.wrain_piezo);
+    this.platform.log.info('  monthlyrainin:', dataReport.mrain_piezo);
+    this.platform.log.info('  yearlyrainin:', dataReport.yrain_piezo);
 
     this.updateStatusActive(this.temperatureSensor, true);
     this.updateStatusActive(this.humiditySensor, true);
