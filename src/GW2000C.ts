@@ -196,6 +196,9 @@ export class GW2000C extends ThermoHygroBaroSensor {
     this.updateCurrentTemperature(this.indoorTemperature, dataReport.tempinf);
     this.updateCurrentRelativeHumidity(this.indoorHumidity, dataReport.humidityin);
 
+    this.updateRelativePressure(dataReport.baromrelin);
+    this.updateAbsolutePressure(dataReport.baromabsin);
+
     if (this.solarRadiation) {
       const wm2 = parseFloat(dataReport.solarradiation);
       const luxFactor = this.platform.config.ws.solarradiation?.luxFactor ?? 126.7;
@@ -213,14 +216,12 @@ export class GW2000C extends ThermoHygroBaroSensor {
       const uv = parseInt(dataReport.uv);
 
       this.updateStatusActive(this.uvIndex, true);
-      this.updateName(this.uvIndex, `UV Index: ${uv} ${this.toRisk(uv)}`);
+      this.updateName(this.uvIndex, `UV Index: ${uv} (${this.toRisk(uv)})`);
       this.updateOccupancyDetected(this.uvIndex, uv > this.uvThreshold);
     }
 
     // Wind
-
-    this.windSensor?.updateDirection(winddir);
-    this.windSensor?.updateSpeed(windspeedmph, this.platform.config.ws.wind.speedThresold);
+    this.windSensor?.updateDirectionAndSpeed(winddir, windspeedmph, this.platform.config.ws.wind.speedThresold);
     
     this.windGust?.updateSpeed(windgustmph, this.platform.config.ws.wind.gustThresold);
     this.maxDailyGust?.updateSpeed(maxdailygust, this.platform.config.ws.wind.maxDailyGustThresold);
