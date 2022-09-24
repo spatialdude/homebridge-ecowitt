@@ -1,6 +1,6 @@
 import { Service, PlatformAccessory /*ServiceEventTypes*/ } from 'homebridge';
 import { EcowittPlatform } from './EcowittPlatform';
-import { ThermoHygroSensor } from './ThermoHygroSensor';
+import { ThermoHygroBaroSensor } from './ThermoHygroBaroSensor';
 
 import * as Utils from './Utils.js';
 
@@ -21,12 +21,12 @@ const uvInfos = [
 
 //------------------------------------------------------------------------------
 
-export class GW2000C extends ThermoHygroSensor {
+export class GW2000C extends ThermoHygroBaroSensor {
   protected solarRadiation!: Service;
   protected uvIndex!: Service;
   protected uvThreshold: number;
 
-  protected windDirection: WindSensor | undefined;
+  protected windSensor: WindSensor | undefined;
   protected windSpeed: WindSensor | undefined;
   protected windGust: WindSensor | undefined;
   protected maxDailyGust: WindSensor | undefined;
@@ -42,6 +42,9 @@ export class GW2000C extends ThermoHygroSensor {
 
   protected dewPoint: Service | undefined;
 
+  protected indoorTemperature: Service;
+  protected indoorHumidity: Service;
+
   constructor(
     protected readonly platform: EcowittPlatform,
     protected readonly accessory: PlatformAccessory,
@@ -50,10 +53,25 @@ export class GW2000C extends ThermoHygroSensor {
 
     this.setModel(
       'GW2000C',
-      'Solar Powererd 7-in-1 Outdoor Sensor');
+      'Solar Powered 7-in-1 Outdoor Sensor');
+
+    this.accessory.getService(this.platform.Service.AccessoryInformation)!
+      .setCharacteristic(this.platform.Characteristic.ConfiguredName, this.platform.baseStationInfo.deviceName)
+      .setCharacteristic(this.platform.Characteristic.HardwareRevision, platform.baseStationInfo.model);
+
+    const nameInTemp = 'Indoor Temperature';
+    this.indoorTemperature = this.accessory.getService(nameInTemp)
+      || this.accessory.addService(this.platform.Service.TemperatureSensor, nameInTemp, this.platform.serviceUuid(nameInTemp));
+
+    const nameInHum = 'Indoor Humidity';
+    this.indoorHumidity = this.accessory.getService(nameInHum)
+      || this.accessory.addService(this.platform.Service.HumiditySensor, nameInHum, this.platform.serviceUuid(nameInHum));
 
     this.setName(this.temperatureSensor, 'Outdoor Temperature');
     this.setName(this.humiditySensor, 'Outdoor Humidity');
+
+    this.setName(this.indoorTemperature, 'Indoor Temperature');
+    this.setName(this.indoorHumidity, 'Indoor Humidity');
 
     // Dew point
 
@@ -96,23 +114,9 @@ export class GW2000C extends ThermoHygroSensor {
 
     // Wind
 
-    const windHide = this.platform.config?.ws?.wind?.hide || [];
-
-    if (!windHide.includes('Direction')) {
-      this.windDirection = new WindSensor(platform, accessory, 'Wind Direction');
-    }
-
-    if (!windHide.includes('Speed')) {
-      this.windSpeed = new WindSensor(platform, accessory, 'Wind Speed');
-    }
-
-    if (!windHide.includes('Gust')) {
-      this.windGust = new WindSensor(platform, accessory, 'Wind Gust');
-    }
-
-    if (!windHide.includes('MaxDailyGust')) {
-      this.maxDailyGust = new WindSensor(platform, accessory, 'Max Daily Gust');
-    }
+    this.windSensor = new WindSensor(platform, accessory, 'Wind');
+    this.windGust = new WindSensor(platform, accessory, 'Gust');
+    this.maxDailyGust = new WindSensor(platform, accessory, 'Max Daily Gust');
 
     // Rain
 
@@ -165,7 +169,6 @@ export class GW2000C extends ThermoHygroSensor {
     const windgustmph = parseFloat(dataReport.windgustmph);
     const maxdailygust = parseFloat(dataReport.maxdailygust);
 
-
     this.platform.log.info('  winddir:', winddir);
     this.platform.log.info('  windspeedmph:', windspeedmph);
     this.platform.log.info('  windgustmph:', windgustmph);
@@ -190,6 +193,12 @@ export class GW2000C extends ThermoHygroSensor {
     this.updateHumidity(dataReport.humidity);
     this.updateStatusLowBattery(this.humiditySensor, lowBattery);
 
+    this.updateCurrentTemperature(this.indoorTemperature, dataReport.tempinf);
+    this.updateCurrentRelativeHumidity(this.indoorHumidity, dataReport.humidityin);
+
+    this.updateRelativePressure(dataReport.baromrelin);
+    this.updateAbsolutePressure(dataReport.baromabsin);
+
     if (this.solarRadiation) {
       const wm2 = parseFloat(dataReport.solarradiation);
       const luxFactor = this.platform.config.ws.solarradiation?.luxFactor ?? 126.7;
@@ -207,27 +216,25 @@ export class GW2000C extends ThermoHygroSensor {
       const uv = parseInt(dataReport.uv);
 
       this.updateStatusActive(this.uvIndex, true);
-      this.updateName(this.uvIndex, `UV Index: ${uv} ${this.toRisk(uv)}`);
+      this.updateName(this.uvIndex, `UV Index: ${uv} (${this.toRisk(uv)})`);
       this.updateOccupancyDetected(this.uvIndex, uv > this.uvThreshold);
     }
 
     // Wind
-
-    this.windDirection?.updateDirection(winddir);
-    this.windSpeed?.updateSpeed(windspeedmph, this.platform.config.ws.wind.speedThresold);
+    this.windSensor?.updateDirectionAndSpeed(winddir, windspeedmph, this.platform.config.ws.wind.speedThresold);
+    
     this.windGust?.updateSpeed(windgustmph, this.platform.config.ws.wind.gustThresold);
     this.maxDailyGust?.updateSpeed(maxdailygust, this.platform.config.ws.wind.maxDailyGustThresold);
 
     // Rain
 
-    this.rainRate?.updateRate(parseFloat(dataReport.rainratein), this.platform.config.ws?.rain?.rateThreshold);
-    this.eventRain?.updateTotal(parseFloat(dataReport.eventrainin), this.platform.config.ws?.rain?.eventThreshold);
-    this.hourlyRain?.updateTotal(parseFloat(dataReport.hourlyrainin), this.platform.config.ws?.rain?.hourlyThreshold);
-    this.dailyRain?.updateTotal(parseFloat(dataReport.dailyrainin), this.platform.config.ws?.rain?.dailyThreshold);
-    this.weeklyRain?.updateTotal(parseFloat(dataReport.weeklyrainin), this.platform.config.ws?.rain?.weeklyThreshold);
-    this.monthlyRain?.updateTotal(parseFloat(dataReport.monthlyrainin), this.platform.config.ws?.rain?.monthlyThreshold);
-    this.yearlyRain?.updateTotal(parseFloat(dataReport.yearlyrainin), this.platform.config.ws?.rain?.yearlyThreshold);
-    this.totalRain?.updateTotal(parseFloat(dataReport.totalrainin), undefined);
+    this.rainRate?.updateRate(parseFloat(dataReport.rrain_piezo), this.platform.config.ws?.rain?.rateThreshold);
+    this.eventRain?.updateTotal(parseFloat(dataReport.erain_piezo), this.platform.config.ws?.rain?.eventThreshold);
+    this.hourlyRain?.updateTotal(parseFloat(dataReport.hrain_piezo), this.platform.config.ws?.rain?.hourlyThreshold);
+    this.dailyRain?.updateTotal(parseFloat(dataReport.drain_piezo), this.platform.config.ws?.rain?.dailyThreshold);
+    this.weeklyRain?.updateTotal(parseFloat(dataReport.wrain_piezo), this.platform.config.ws?.rain?.weeklyThreshold);
+    this.monthlyRain?.updateTotal(parseFloat(dataReport.mrain_piezo), this.platform.config.ws?.rain?.monthlyThreshold);
+    this.yearlyRain?.updateTotal(parseFloat(dataReport.yrain_piezo), this.platform.config.ws?.rain?.yearlyThreshold);
 
     // Dew point
 
