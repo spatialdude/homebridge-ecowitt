@@ -202,7 +202,7 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
       }
     }
 
-    if (dataReport?.model == 'GW2000C') {
+    if (dataReport?.model === 'GW2000C') {
       this.baseStationInfo.hardwareRevision = dataReport.stationtype;
       this.baseStationInfo.firmwareRevision = stationTypeInfo[2];
       if (!this.config?.thbin?.hide) {

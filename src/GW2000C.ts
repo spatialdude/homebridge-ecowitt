@@ -222,7 +222,6 @@ export class GW2000C extends ThermoHygroBaroSensor {
 
     // Wind
     this.windSensor?.updateDirectionAndSpeed(winddir, windspeedmph, this.platform.config.ws.wind.speedThresold);
-    
     this.windGust?.updateSpeed(windgustmph, this.platform.config.ws.wind.gustThresold);
     this.maxDailyGust?.updateSpeed(maxdailygust, this.platform.config.ws.wind.maxDailyGustThresold);
 
