@@ -3,7 +3,7 @@ import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
 
 import { GW1000 } from './GW1000';
-import { GW1100 } from './GW1100';
+import { GW2000C } from './GW2000C';
 import { WH25 } from './WH25';
 import { WH31 } from './WH31';
 import { WH40 } from './WH40';
@@ -172,8 +172,8 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
   //----------------------------------------------------------------------------
 
   registerAccessories(dataReport) {
-    const stationTypeInfo = dataReport?.stationtype.match(/(EasyWeather|GW1[01]00(?:[AB]?))_?(.*)/);
-    const modelInfo = dataReport?.model.match(/(HP2551CA|GW1[01]00)[AB]?_?(.*)/);
+    const stationTypeInfo = dataReport?.stationtype.match(/(EasyWeather|GW1[01]00(?:[AB]?)|GW2000C)_?(.*)/);
+    const modelInfo = dataReport?.model.match(/(HP2551CA|GW1[01]00|GW2000C)[AB]?_?(.*)/);
 
     this.log.info('stationTypeInfo:', JSON.stringify(stationTypeInfo));
     this.log.info('modelInfo:', JSON.stringify(modelInfo));
@@ -208,6 +208,15 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
           this.baseStationInfo.softwareRevision = dataReport.stationtype;
           this.baseStationInfo.firmwareRevision = modelInfo[2];
           break;
+      }
+    }
+
+    if (dataReport?.model === 'GW2000C') {
+      this.baseStationInfo.hardwareRevision = dataReport.stationtype;
+      this.baseStationInfo.firmwareRevision = stationTypeInfo[2];
+      if (!this.config?.thbin?.hide) {
+        this.log.info('Adding GW2000C');
+        this.addSensorType(true, 'GW2000C');
       }
     }
 
@@ -292,6 +301,10 @@ export class EcowittPlatform implements DynamicPlatformPlugin {
         //accessory.context.sensorInfo = sensorInfo;
 
         switch (sensor.type) {
+          case 'GW2000C':
+            sensor.accessory = new GW2000C(this, accessory);
+            break;
+
           case 'GW1000':
             sensor.accessory = new GW1000(this, accessory);
             break;
